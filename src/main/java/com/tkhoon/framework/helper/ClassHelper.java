@@ -1,6 +1,6 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.util.ClassUtil;
+import com.tkhoon.framework.util.ClassUtil;
 import java.lang.annotation.Annotation;
 import java.util.List;
 

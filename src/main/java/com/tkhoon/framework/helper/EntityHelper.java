@@ -1,10 +1,10 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.annotation.Column;
-import com.smart.framework.base.BaseEntity;
-import com.smart.framework.util.ArrayUtil;
-import com.smart.framework.util.MapUtil;
-import com.smart.framework.util.StringUtil;
+import com.tkhoon.framework.annotation.Column;
+import com.tkhoon.framework.base.BaseEntity;
+import com.tkhoon.framework.util.ArrayUtil;
+import com.tkhoon.framework.util.MapUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;

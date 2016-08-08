@@ -1,7 +1,7 @@
-package com.smart.framework;
+package com.tkhoon.framework;
 
-import com.smart.framework.annotation.Transaction;
-import com.smart.framework.helper.DBHelper;
+import com.tkhoon.framework.annotation.Transaction;
+import com.tkhoon.framework.helper.DBHelper;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import net.sf.cglib.proxy.Enhancer;

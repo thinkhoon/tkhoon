@@ -1,9 +1,9 @@
-package com.smart.framework.base;
+package com.tkhoon.framework.base;
 
-import com.smart.framework.OrderedRunner;
-import com.smart.framework.helper.DBHelper;
-import com.smart.framework.helper.InitHelper;
-import com.smart.framework.util.ClassUtil;
+import com.tkhoon.framework.OrderedRunner;
+import com.tkhoon.framework.helper.DBHelper;
+import com.tkhoon.framework.helper.InitHelper;
+import com.tkhoon.framework.util.ClassUtil;
 import java.io.File;
 import java.util.List;
 import org.apache.commons.io.FileUtils;

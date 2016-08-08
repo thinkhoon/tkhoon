@@ -1,7 +1,7 @@
-package com.smart.framework;
+package com.tkhoon.framework;
 
-import com.smart.framework.bean.Result;
-import com.smart.framework.util.WebUtil;
+import com.tkhoon.framework.bean.Result;
+import com.tkhoon.framework.util.WebUtil;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;

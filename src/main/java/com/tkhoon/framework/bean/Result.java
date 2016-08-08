@@ -1,6 +1,6 @@
-package com.smart.framework.bean;
+package com.tkhoon.framework.bean;
 
-import com.smart.framework.base.BaseBean;
+import com.tkhoon.framework.base.BaseBean;
 
 public class Result extends BaseBean {
 

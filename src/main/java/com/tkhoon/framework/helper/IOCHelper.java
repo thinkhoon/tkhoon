@@ -1,9 +1,9 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.annotation.Impl;
-import com.smart.framework.annotation.Inject;
-import com.smart.framework.util.ArrayUtil;
-import com.smart.framework.util.CollectionUtil;
+import com.tkhoon.framework.annotation.Impl;
+import com.tkhoon.framework.annotation.Inject;
+import com.tkhoon.framework.util.ArrayUtil;
+import com.tkhoon.framework.util.CollectionUtil;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;

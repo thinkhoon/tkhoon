@@ -1,7 +1,7 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.util.FileUtil;
-import com.smart.framework.util.StringUtil;
+import com.tkhoon.framework.util.FileUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.util.Properties;
 
 public class ConfigHelper {

@@ -1,4 +1,4 @@
-package com.smart.framework.base;
+package com.tkhoon.framework.base;
 
 import java.sql.Connection;
 

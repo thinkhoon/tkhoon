@@ -1,10 +1,10 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.annotation.Aspect;
-import com.smart.framework.base.BaseAspect;
-import com.smart.framework.util.CollectionUtil;
-import com.smart.framework.util.ObjectUtil;
-import com.smart.framework.util.StringUtil;
+import com.tkhoon.framework.annotation.Aspect;
+import com.tkhoon.framework.base.BaseAspect;
+import com.tkhoon.framework.util.CollectionUtil;
+import com.tkhoon.framework.util.ObjectUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import org.apache.log4j.Logger;

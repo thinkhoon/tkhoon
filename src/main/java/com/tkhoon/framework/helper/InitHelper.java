@@ -1,4 +1,4 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
 import org.apache.log4j.Logger;
 

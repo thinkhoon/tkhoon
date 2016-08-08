@@ -1,4 +1,4 @@
-package com.smart.framework.util;
+package com.tkhoon.framework.util;
 
 import java.util.Map;
 import org.apache.commons.collections.MapUtils;

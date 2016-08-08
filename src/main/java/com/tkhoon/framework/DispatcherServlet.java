@@ -1,15 +1,15 @@
-package com.smart.framework;
+package com.tkhoon.framework;
 
-import com.smart.framework.bean.ActionBean;
-import com.smart.framework.bean.RequestBean;
-import com.smart.framework.bean.Result;
-import com.smart.framework.helper.ActionHelper;
-import com.smart.framework.helper.BeanHelper;
-import com.smart.framework.helper.InitHelper;
-import com.smart.framework.util.CastUtil;
-import com.smart.framework.util.MapUtil;
-import com.smart.framework.util.StringUtil;
-import com.smart.framework.util.WebUtil;
+import com.tkhoon.framework.bean.ActionBean;
+import com.tkhoon.framework.bean.RequestBean;
+import com.tkhoon.framework.bean.Result;
+import com.tkhoon.framework.helper.ActionHelper;
+import com.tkhoon.framework.helper.BeanHelper;
+import com.tkhoon.framework.helper.InitHelper;
+import com.tkhoon.framework.util.CastUtil;
+import com.tkhoon.framework.util.MapUtil;
+import com.tkhoon.framework.util.StringUtil;
+import com.tkhoon.framework.util.WebUtil;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

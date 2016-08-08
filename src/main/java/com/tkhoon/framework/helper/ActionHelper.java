@@ -1,11 +1,11 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.annotation.Request;
-import com.smart.framework.base.BaseAction;
-import com.smart.framework.bean.ActionBean;
-import com.smart.framework.bean.RequestBean;
-import com.smart.framework.util.ArrayUtil;
-import com.smart.framework.util.StringUtil;
+import com.tkhoon.framework.annotation.Request;
+import com.tkhoon.framework.base.BaseAction;
+import com.tkhoon.framework.bean.ActionBean;
+import com.tkhoon.framework.bean.RequestBean;
+import com.tkhoon.framework.util.ArrayUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;

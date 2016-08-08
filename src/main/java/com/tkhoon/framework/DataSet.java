@@ -1,9 +1,9 @@
-package com.smart.framework;
+package com.tkhoon.framework;
 
-import com.smart.framework.helper.DBHelper;
-import com.smart.framework.helper.SQLHelper;
-import com.smart.framework.util.CastUtil;
-import com.smart.framework.util.ObjectUtil;
+import com.tkhoon.framework.helper.DBHelper;
+import com.tkhoon.framework.helper.SQLHelper;
+import com.tkhoon.framework.util.CastUtil;
+import com.tkhoon.framework.util.ObjectUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

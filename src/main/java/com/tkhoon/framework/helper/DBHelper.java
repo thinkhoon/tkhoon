@@ -1,7 +1,7 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.util.CastUtil;
-import com.smart.framework.util.DBUtil;
+import com.tkhoon.framework.util.CastUtil;
+import com.tkhoon.framework.util.DBUtil;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;

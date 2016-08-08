@@ -1,4 +1,4 @@
-package com.smart.framework;
+package com.tkhoon.framework;
 
 import java.io.IOException;
 import javax.servlet.Filter;

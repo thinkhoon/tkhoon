@@ -1,10 +1,10 @@
-package com.smart.framework.helper;
+package com.tkhoon.framework.helper;
 
-import com.smart.framework.annotation.Table;
-import com.smart.framework.util.ArrayUtil;
-import com.smart.framework.util.FileUtil;
-import com.smart.framework.util.MapUtil;
-import com.smart.framework.util.StringUtil;
+import com.tkhoon.framework.annotation.Table;
+import com.tkhoon.framework.util.ArrayUtil;
+import com.tkhoon.framework.util.FileUtil;
+import com.tkhoon.framework.util.MapUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;

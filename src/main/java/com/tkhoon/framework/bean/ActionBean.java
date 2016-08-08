@@ -1,4 +1,4 @@
-package com.smart.framework.bean;
+package com.tkhoon.framework.bean;
 
 import java.lang.reflect.Method;
 
