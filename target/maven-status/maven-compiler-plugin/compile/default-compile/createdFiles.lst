@@ -1,5 +1,6 @@
 com/tkhoon/framework/annotation/Transaction.class
 com/tkhoon/framework/helper/ServiceHelper.class
+com/tkhoon/framework/DataContext$Response.class
 com/tkhoon/framework/util/JSONUtil.class
 com/tkhoon/framework/util/ArrayUtil.class
 com/tkhoon/framework/annotation/Order.class
@@ -7,6 +8,7 @@ com/tkhoon/framework/helper/BeanHelper.class
 com/tkhoon/framework/OrderedRunner.class
 com/tkhoon/framework/UploadServlet.class
 com/tkhoon/framework/base/BaseTest.class
+com/tkhoon/framework/DataContext$Session.class
 com/tkhoon/framework/util/DBUtil.class
 com/tkhoon/framework/bean/ActionBean.class
 com/tkhoon/framework/helper/AOPHelper.class
@@ -22,8 +24,9 @@ com/tkhoon/framework/util/ClassUtil.class
 com/tkhoon/framework/util/StreamUtil.class
 com/tkhoon/framework/annotation/Column.class
 com/tkhoon/framework/base/BaseAction.class
-com/tkhoon/framework/util/CastUtil.class
 com/tkhoon/framework/util/FileUtil.class
+com/tkhoon/framework/util/CastUtil.class
+com/tkhoon/framework/DataContext$Context.class
 com/tkhoon/framework/bean/Pager.class
 com/tkhoon/framework/bean/Result.class
 com/tkhoon/framework/DataSet.class
@@ -44,6 +47,7 @@ com/tkhoon/framework/OrderedRunner$1.class
 com/tkhoon/framework/helper/ActionHelper.class
 com/tkhoon/framework/helper/ConfigHelper.class
 com/tkhoon/framework/helper/ClassHelper.class
+com/tkhoon/framework/DataContext$Request.class
 com/tkhoon/framework/util/ClassUtil$1.class
 com/tkhoon/framework/annotation/Inject.class
 com/tkhoon/framework/EncodingFilter.class
