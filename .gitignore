@@ -1,5 +1,10 @@
-/target/*
+# Maven #
+target
+
+# IDEA #
 *.iml
-/.idea/*
-*.class
-*.jar
+.idea/
+# Eclipse #
+.classpath
+.project
+.settings

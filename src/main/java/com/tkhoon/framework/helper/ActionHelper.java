@@ -6,7 +6,6 @@ import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ public class ActionHelper {
 
     private static final Logger logger = Logger.getLogger(ActionHelper.class);
 
-    // RequestBean => ActionBean
     private static final Map<RequestBean, ActionBean> actionMap = new HashMap<RequestBean, ActionBean>();
 
     static {
