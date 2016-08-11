@@ -3,7 +3,8 @@ target
 
 # IDEA #
 *.iml
-.idea/
+.idea
+
 # Eclipse #
 .classpath
 .project
