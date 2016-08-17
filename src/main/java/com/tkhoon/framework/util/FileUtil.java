@@ -55,6 +55,24 @@ public class FileUtil {
         return dir;
     }
 
+    // 创建文件
+    public static File createFile(String filePath) {
+        File file = null;
+        try {
+            if (StringUtil.isNotEmpty(filePath)) {
+                file = new File(filePath);
+                File parentPath = file.getParentFile();
+                if (!parentPath.exists()) {
+                    FileUtils.forceMkdir(parentPath);
+                }
+            }
+        } catch (Exception e) {
+            logger.error("创建文件出错！", e);
+            throw new RuntimeException(e);
+        }
+        return file;
+    }
+
     // 复制目录（不会复制空目录）
     public static void copyDir(String srcPath, String destPath) {
         try {
