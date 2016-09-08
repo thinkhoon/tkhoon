@@ -4,8 +4,11 @@ import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.StringUtil;
 
 import java.util.Properties;
+import org.apache.log4j.Logger;
 
 public class ConfigHelper {
+
+    private static final Logger logger = Logger.getLogger(ConfigHelper.class);
 
     private static final Properties configProperties = FileUtil.loadPropFile("config.properties");
 
@@ -14,7 +17,7 @@ public class ConfigHelper {
         if (configProperties.containsKey(key)) {
             value = configProperties.getProperty(key);
         } else {
-            System.err.println("Can not get property [" + key + "] in config.properties file.");
+            logger.error("无法在 config.properties 文件中获取属性：" + key);
         }
         return value;
     }
