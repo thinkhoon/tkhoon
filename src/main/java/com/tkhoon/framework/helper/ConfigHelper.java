@@ -2,7 +2,6 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.util.Properties;
 import org.apache.log4j.Logger;
 
