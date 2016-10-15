@@ -23,6 +23,7 @@ public class ContainerListener implements ServletContextListener {
     public void contextDestroyed(ServletContextEvent sce) {
     }
 
+    //notice
     private void addServletMapping(ServletContext context) {
         // 用 DefaultServlet 映射所有静态资源
         ServletRegistration defaultServletRegistration = context.getServletRegistration("default");
@@ -34,4 +35,7 @@ public class ContainerListener implements ServletContextListener {
         ServletRegistration uploadServletRegistration = context.getServletRegistration("upload");
         uploadServletRegistration.addMapping("/upload.do");
     }
+
+
+
 }
