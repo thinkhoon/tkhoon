@@ -61,9 +61,9 @@ public class FileUtil {
         try {
             if (StringUtil.isNotEmpty(filePath)) {
                 file = new File(filePath);
-                File parentDir = file.getParentFile();
-                if (!parentDir.exists()) {
-                    FileUtils.forceMkdir(parentDir);
+                File parentPath = file.getParentFile();
+                if (!parentPath.exists()) {
+                    FileUtils.forceMkdir(parentPath);
                 }
             }
         } catch (Exception e) {

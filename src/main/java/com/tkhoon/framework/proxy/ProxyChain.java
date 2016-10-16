@@ -1,5 +1,7 @@
 package com.tkhoon.framework.proxy;
 
+import com.tkhoon.framework.util.CollectionUtil;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import net.sf.cglib.proxy.MethodProxy;
@@ -7,7 +9,7 @@ import net.sf.cglib.proxy.MethodProxy;
 public class ProxyChain {
 
     private List<Proxy> proxyList;
-    private int currentProxyIndex = 0;
+    private int currentProxyIndex;
 
     private Class<?> targetClass;
     private Object targetObject;
@@ -49,8 +51,8 @@ public class ProxyChain {
         return methodResult;
     }
 
-    public Object doProxyChain() throws Exception {
-        if (currentProxyIndex < proxyList.size()) {
+    public void doProxyChain() throws Exception {
+        if (CollectionUtil.isNotEmpty(proxyList) && currentProxyIndex < proxyList.size()) {
             proxyList.get(currentProxyIndex++).doProxy(this);
         } else {
             try {
@@ -59,6 +61,5 @@ public class ProxyChain {
                 throw new RuntimeException(throwable);
             }
         }
-        return methodResult;
     }
 }
