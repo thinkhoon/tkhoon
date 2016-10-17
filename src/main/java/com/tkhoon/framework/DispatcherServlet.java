@@ -41,6 +41,7 @@ public class DispatcherServlet extends HttpServlet {
         addServletMapping(config.getServletContext());
     }
 
+    // 初始化 Helper 类
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取当前请求相关数据
