@@ -3,18 +3,26 @@ package com.tkhoon.framework.bean;
 public class RequestBean {
 
     private String requestMethod;
-    private String requestPath;
+    private String requestURL;
 
-    public RequestBean(String requestMethod, String requestPath) {
+    public RequestBean(String requestMethod, String requestURL) {
         this.requestMethod = requestMethod;
-        this.requestPath = requestPath;
+        this.requestURL = requestURL;
     }
 
     public String getRequestMethod() {
         return requestMethod;
     }
 
-    public String getRequestPath() {
-        return requestPath;
+    public void setRequestMethod(String requestMethod) {
+        this.requestMethod = requestMethod;
+    }
+
+    public String getRequestURL() {
+        return requestURL;
+    }
+
+    public void setRequestURL(String requestURL) {
+        this.requestURL = requestURL;
     }
 }

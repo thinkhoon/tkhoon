@@ -1,19 +1,22 @@
 package com.tkhoon.framework.proxy;
 
+import com.tkhoon.framework.util.CollectionUtil;
+
 import java.lang.reflect.Method;
 import java.util.List;
 import net.sf.cglib.proxy.MethodProxy;
 
 public class ProxyChain {
 
+    private List<Proxy> proxyList;
+    private int currentProxyIndex;
+
     private Class<?> targetClass;
     private Object targetObject;
     private Method targetMethod;
     private Object[] methodParams;
     private MethodProxy methodProxy;
-
-    private List<Proxy> proxyList;
-    private int currentProxyIndex = 0;
+    private Object methodResult;
 
     public ProxyChain(Class<?> targetClass, Object targetObject, Method targetMethod, Object[] methodParams, MethodProxy methodProxy, List<Proxy> proxyList) {
         this.targetClass = targetClass;
@@ -28,6 +31,10 @@ public class ProxyChain {
         return targetClass;
     }
 
+    public Object getTargetObject() {
+        return targetObject;
+    }
+
     public Method getTargetMethod() {
         return targetMethod;
     }
@@ -36,10 +43,17 @@ public class ProxyChain {
         return methodParams;
     }
 
-    public Object doProxyChain() throws Exception {
-        Object methodResult;
-        if (currentProxyIndex < proxyList.size()) {
-            methodResult = proxyList.get(currentProxyIndex++).doProxy(this);
+    public MethodProxy getMethodProxy() {
+        return methodProxy;
+    }
+
+    public Object getMethodResult() {
+        return methodResult;
+    }
+
+    public void doProxyChain() throws Exception {
+        if (CollectionUtil.isNotEmpty(proxyList) && currentProxyIndex < proxyList.size()) {
+            proxyList.get(currentProxyIndex++).doProxy(this);
         } else {
             try {
                 methodResult = methodProxy.invokeSuper(targetObject, methodParams);
@@ -47,6 +61,5 @@ public class ProxyChain {
                 throw new RuntimeException(throwable);
             }
         }
-        return methodResult;
     }
 }

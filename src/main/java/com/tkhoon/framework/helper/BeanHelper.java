@@ -1,6 +1,7 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Bean;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,9 @@ public class BeanHelper {
     private static final Map<Class<?>, Object> beanMap = new HashMap<Class<?>, Object>(); // Bean 类 => Bean 实例
 
     static {
+        if (logger.isDebugEnabled()) {
+            logger.debug("初始化 BeanHelper");
+        }
         try {
             // 获取并遍历所有的 Bean（带有 @Bean 注解的类）
             List<Class<?>> beanClassList = ClassHelper.getClassListByAnnotation(Bean.class);

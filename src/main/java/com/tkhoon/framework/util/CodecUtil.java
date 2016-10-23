@@ -1,6 +1,5 @@
 package com.tkhoon.framework.util;
 
-import com.tkhoon.framework.FrameworkConstant;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.UUID;
@@ -14,10 +13,10 @@ public class CodecUtil {
     private static final Logger logger = Logger.getLogger(CodecUtil.class);
 
     // 将字符串 UTF-8 编码
-    public static String encodeUTF8(String str) {
+    public static String encodeForUTF8(String str) {
         String target;
         try {
-            target = URLEncoder.encode(str, FrameworkConstant.DEFAULT_CHARSET);
+            target = URLEncoder.encode(str, "UTF-8");
         } catch (Exception e) {
             logger.error("编码出错！", e);
             throw new RuntimeException( e);
@@ -26,10 +25,10 @@ public class CodecUtil {
     }
 
     // 将字符串 UTF-8 解码
-    public static String decodeUTF8(String str) {
+    public static String decodeForUTF8(String str) {
         String target;
         try {
-            target = URLDecoder.decode(str, FrameworkConstant.DEFAULT_CHARSET);
+            target = URLDecoder.decode(str, "UTF-8");
         } catch (Exception e) {
             logger.error("解码出错！", e);
             throw new RuntimeException(e);
@@ -38,27 +37,27 @@ public class CodecUtil {
     }
 
     // 将字符串 Base64 编码
-    public static String encodeBase64(String str) {
+    public static String encodeForBase64(String str) {
         return Base64.encodeBase64String(str.getBytes());
     }
 
     // 将字符串 Base64 解码
-    public static String decodeBase64(String str) {
+    public static String decodeForBase64(String str) {
         return new String(Base64.decodeBase64(str.getBytes()));
     }
 
     // 将字符串 MD5 加密
-    public static String encryptMD5(String str) {
+    public static String encryptForMD5(String str) {
         return DigestUtils.md5Hex(str);
     }
 
     // 将字符串 SHA 加密
-    public static String encryptSHA(String str) {
+    public static String encryptForSHA(String str) {
         return DigestUtils.sha1Hex(str);
     }
 
     // 创建随机数
-    public static String createRandom(int count) {
+    public static String createRandomNumber(int count) {
         return RandomStringUtils.randomNumeric(count);
     }
 

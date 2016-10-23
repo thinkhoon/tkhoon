@@ -206,7 +206,7 @@ public class DBUtil {
 
     private static void printSQL(String sql) {
         if (logger.isDebugEnabled()) {
-            logger.debug("[tkhoon] SQL - " + sql);
+            logger.debug("SQL: " + sql);
         }
     }
 }

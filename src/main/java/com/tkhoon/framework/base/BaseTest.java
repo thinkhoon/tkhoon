@@ -1,12 +1,11 @@
 package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.OrderedRunner;
-import com.tkhoon.framework.tkhoon;
 import com.tkhoon.framework.helper.DBHelper;
+import com.tkhoon.framework.helper.InitHelper;
 import com.tkhoon.framework.util.ClassUtil;
 import java.io.File;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
@@ -16,8 +15,8 @@ public abstract class BaseTest {
 
     private static final Logger logger = Logger.getLogger(BaseTest.class);
 
-    static {
-        tkhoon.init();
+    protected BaseTest() {
+        InitHelper.init();
     }
 
     protected static void initSQL(String sqlPath) {

@@ -1,26 +1,16 @@
 package com.tkhoon.framework.helper;
 
-import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.annotation.Aspect;
-import com.tkhoon.framework.annotation.Order;
-import com.tkhoon.framework.aspect.PluginAspect;
-import com.tkhoon.framework.aspect.TransactionAspect;
 import com.tkhoon.framework.base.BaseAspect;
-import com.tkhoon.framework.base.BaseService;
 import com.tkhoon.framework.proxy.Proxy;
-import com.tkhoon.framework.proxy.ProxyManager;
-import com.tkhoon.framework.util.ClassUtil;
-import com.tkhoon.framework.util.CollectionUtil;
+import com.tkhoon.framework.proxy.ProxyFactory;
 import com.tkhoon.framework.util.ObjectUtil;
 import com.tkhoon.framework.util.StringUtil;
+
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 public class AOPHelper {
@@ -28,6 +18,9 @@ public class AOPHelper {
     private static final Logger logger = Logger.getLogger(AOPHelper.class);
 
     static {
+        if (logger.isDebugEnabled()) {
+            logger.debug("初始化 AOPHelper");
+        }
         try {
             // 创建 Aspect Map（用于存放切面类与目标类列表的映射关系）
             Map<Class<?>, List<Class<?>>> aspectMap = createAspectMap();
@@ -39,7 +32,7 @@ public class AOPHelper {
                 Class<?> targetClass = targetEntry.getKey();
                 List<Proxy> baseAspectList = targetEntry.getValue();
                 // 创建代理实例
-                Object proxyInstance = ProxyManager.getInstance().createProxy(targetClass, baseAspectList);
+                Object proxyInstance = new ProxyFactory(targetClass, baseAspectList).createProxy();
                 // 获取目标实例（从 IOC 容器中获取）
                 Object targetInstance = BeanHelper.getBean(targetClass);
                 // 复制目标实例中的成员变量到代理实例中
@@ -54,37 +47,9 @@ public class AOPHelper {
 
     private static Map<Class<?>, List<Class<?>>> createAspectMap() throws Exception {
         // 定义 Aspect Map
-        Map<Class<?>, List<Class<?>>> aspectMap = new LinkedHashMap<Class<?>, List<Class<?>>>();
-        // 添加插件切面
-        addPluginAspect(aspectMap);
-        // 添加用户界面
-        addUserAspect(aspectMap);
-        // 添加事务切面
-        addTransactionAspect(aspectMap);
-        // 返回 Aspect Map
-        return aspectMap;
-    }
-
-    private static void addPluginAspect(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
-        // 获取插件包名下父类为 PluginAspect 的所有类（插件切面类）
-        List<Class<?>> pluginAspectClassList = ClassUtil.getClassListBySuper(FrameworkConstant.PLUGIN_PACKAGE, PluginAspect.class);
-        if (CollectionUtil.isNotEmpty(pluginAspectClassList)) {
-            // 遍历所有插件切面类
-            for (Class<?> pluginAspectClass : pluginAspectClassList) {
-                // 创建插件切面类实例
-                PluginAspect pluginAspect = (PluginAspect) pluginAspectClass.newInstance();
-                // 将插件切面类及其所对应的目标类列表放入 Aspect Map 中
-                aspectMap.put(pluginAspectClass, pluginAspect.getTargetClassList());
-            }
-        }
-    }
-
-    private static void addUserAspect(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
-        // 获取切面类
+        Map<Class<?>, List<Class<?>>> aspectMap = new HashMap<Class<?>, List<Class<?>>>();
+        // 获取并遍历所有的切面类
         List<Class<?>> aspectClassList = ClassHelper.getClassListBySuper(BaseAspect.class);
-        // 排序切面类
-        sortAspectClassList(aspectClassList);
-        // 遍历切面类
         for (Class<?> aspectClass : aspectClassList) {
             // 判断 @Aspect 注解是否存在
             if (aspectClass.isAnnotationPresent(Aspect.class)) {
@@ -96,36 +61,8 @@ public class AOPHelper {
                 aspectMap.put(aspectClass, targetClassList);
             }
         }
-    }
-
-    private static void addTransactionAspect(Map<Class<?>, List<Class<?>>> aspectMap) {
-        // 使用 TransactionAspect 横切所有 Service 类
-        List<Class<?>> serviceClassList = ClassHelper.getClassListBySuper(BaseService.class);
-        aspectMap.put(TransactionAspect.class, serviceClassList);
-    }
-
-    private static void sortAspectClassList(List<Class<?>> aspectClassList) {
-        // 排序切面类列表
-        Collections.sort(aspectClassList, new Comparator<Class<?>>() {
-            @Override
-            public int compare(Class<?> aspect1, Class<?> aspect2) {
-                if (aspect1.isAnnotationPresent(Order.class) || aspect2.isAnnotationPresent(Order.class)) {
-                    // 若有 @Order 注解，则优先比较（序号的值越小越靠前）
-                    if (aspect1.isAnnotationPresent(Order.class)) {
-                        return getOrderValue(aspect1) - getOrderValue(aspect2);
-                    } else {
-                        return getOrderValue(aspect2) - getOrderValue(aspect1);
-                    }
-                } else {
-                    // 若无 @Order 注解，则比较类名（按字母顺序升序排列）
-                    return aspect1.hashCode() - aspect2.hashCode();
-                }
-            }
-
-            private int getOrderValue(Class<?> aspect) {
-                return aspect.getAnnotation(Order.class) != null ? aspect.getAnnotation(Order.class).value() : 0;
-            }
-        });
+        // 返回 Aspect Map
+        return aspectMap;
     }
 
     private static List<Class<?>> createTargetClassList(Aspect aspect) throws Exception {

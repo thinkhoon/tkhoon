@@ -2,11 +2,11 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.DBUtil;
-import com.tkhoon.framework.util.StringUtil;
+
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
-
+import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;
@@ -18,53 +18,33 @@ public class DBHelper {
     private static final BasicDataSource ds = new BasicDataSource();
     private static final QueryRunner runner = new QueryRunner(ds);
 
-    // 定义一个局部线程变量（使每个线程都拥有自己的连接）
-    private static final ThreadLocal<Connection> connContainer = new ThreadLocal<Connection>();
+    private static String databaseType;
 
-    private static String dbType;
+    // 定义一个局部线程变量（使每个线程都拥有自己的连接）
+    private static ThreadLocal<Connection> connContainer = new ThreadLocal<Connection>();
 
     static {
+        if (logger.isDebugEnabled()) {
+            logger.debug("初始化 DBHelper");
+        }
         // 初始化数据源
-        initDataSource();
+        ds.setDriverClassName(ConfigHelper.getStringProperty("jdbc.driver"));
+        ds.setUrl(ConfigHelper.getStringProperty("jdbc.url"));
+        ds.setUsername(ConfigHelper.getStringProperty("jdbc.username"));
+        ds.setPassword(ConfigHelper.getStringProperty("jdbc.password"));
+        ds.setMaxActive(ConfigHelper.getNumberProperty("jdbc.max.active"));
+        ds.setMaxIdle(ConfigHelper.getNumberProperty("jdbc.max.idle"));
         // 获取数据库类型
-        initDBType();
-    }
-
-    private static void initDataSource() {
-        // 从配置文件中获取配置项
-        String driver = ConfigHelper.getStringProperty("jdbc.driver");
-        String url = ConfigHelper.getStringProperty("jdbc.url");
-        String username = ConfigHelper.getStringProperty("jdbc.username");
-        String password = ConfigHelper.getStringProperty("jdbc.password");
-        int maxActive = ConfigHelper.getNumberProperty("jdbc.max.active");
-        int maxIdle = ConfigHelper.getNumberProperty("jdbc.max.idle");
-        // 设置数据源相关字段
-        if (StringUtil.isNotEmpty(driver)) {
-            ds.setDriverClassName(driver);
-        }
-        if (StringUtil.isNotEmpty(url)) {
-            ds.setUrl(url);
-        }
-        if (StringUtil.isNotEmpty(username)) {
-            ds.setUsername(username);
-        }
-        if (StringUtil.isNotEmpty(password)) {
-            ds.setPassword(password);
-        }
-        if (maxActive != 0) {
-            ds.setMaxActive(maxActive);
-        }
-        if (maxIdle != 0) {
-            ds.setMaxIdle(maxIdle);
-        }
-    }
-
-    private static void initDBType() {
         try {
-            dbType = ds.getConnection().getMetaData().getDatabaseProductName();
+            databaseType = ds.getConnection().getMetaData().getDatabaseProductName();
         } catch (Exception e) {
             logger.error("初始化 DBHelper 出错！", e);
         }
+    }
+
+    // 获取数据源
+    public static DataSource getDataSource() {
+        return ds;
     }
 
     // 从数据源中获取数据库连接
@@ -146,7 +126,7 @@ public class DBHelper {
 
     // 获取数据库类型
     public static String getDBType() {
-        return dbType;
+        return databaseType;
     }
 
     // 执行查询（返回一个对象）
