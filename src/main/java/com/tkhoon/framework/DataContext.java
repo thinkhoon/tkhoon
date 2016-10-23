@@ -22,7 +22,7 @@ public class DataContext {
         DataContext dataContext = new DataContext();
         dataContext.request = request;
         dataContext.response = response;
-        dataContextContainer.set(dataContext);
+        dataContextContainer.set(dataContext);   
     }
 
     // 销毁
