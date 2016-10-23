@@ -1,7 +1,13 @@
 package com.tkhoon.framework.util;
 
+import com.tkhoon.framework.FrameworkConstant;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Properties;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -61,9 +67,9 @@ public class FileUtil {
         try {
             if (StringUtil.isNotEmpty(filePath)) {
                 file = new File(filePath);
-                File parentPath = file.getParentFile();
-                if (!parentPath.exists()) {
-                    FileUtils.forceMkdir(parentPath);
+                File parentDir = file.getParentFile();
+                if (!parentDir.exists()) {
+                    FileUtils.forceMkdir(parentDir);
                 }
             }
         } catch (Exception e) {
@@ -147,6 +153,46 @@ public class FileUtil {
         }
         if (!src.isFile()) {
             throw new RuntimeException("该路径不是文件！");
+        }
+    }
+
+    // 将字符串写入文件
+    public static void writeFile(String filePath, String fileContent) {
+        OutputStream os = null;
+        Writer w = null;
+        try {
+            FileUtil.createFile(filePath);
+            os = new BufferedOutputStream(new FileOutputStream(filePath));
+            w = new OutputStreamWriter(os, FrameworkConstant.DEFAULT_CHARSET);
+            w.write(fileContent);
+            w.flush();
+        } catch (Exception e) {
+            logger.error("写入文件出错！", e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                if (w != null) {
+                    w.close();
+                }
+            } catch (Exception e) {
+                logger.error("释放资源出错！", e);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 上传文件
+    public static void uploadFile(String filePath, InputStream inputStream) {
+        try {
+            createFile(filePath);
+            OutputStream outputStream = new FileOutputStream(filePath);
+            StreamUtil.copyStream(inputStream, outputStream);
+        } catch (Exception e) {
+            logger.error("上传文件出错！", e);
+            throw new RuntimeException(e);
         }
     }
 }

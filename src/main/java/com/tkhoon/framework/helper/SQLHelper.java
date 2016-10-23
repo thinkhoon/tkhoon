@@ -5,11 +5,11 @@ import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.log4j.Logger;
 
 public class SQLHelper {
@@ -28,9 +28,10 @@ public class SQLHelper {
         return value;
     }
 
-    public static String generateSelectSQL(Class<?> cls, String condition, Object... params) {
+    public static String generateSelectSQL(Class<?> cls, String condition, String sort, Object... params) {
         StringBuilder sql = new StringBuilder("select * from ").append(getTable(cls));
         sql.append(generateWhere(condition, params));
+        sql.append(generateOrder(sort));
         return sql.toString();
     }
 
@@ -111,7 +112,7 @@ public class SQLHelper {
             int pageStart = (pageNumber - 1) * pageSize;
             int pageEnd = pageSize;
             appendSQLForSQLServer(sql, table, where, order, pageStart, pageEnd);
-        } else if (dbType.equalsIgnoreCase("db2")) {
+        }/* else if (dbType.equalsIgnoreCase("db2")) {
             // DB2
         } else if (dbType.equalsIgnoreCase("sybase")) {
             // Sybase
@@ -123,7 +124,7 @@ public class SQLHelper {
             // HSQL
         } else if (dbType.equalsIgnoreCase("h2")) {
             // H2
-        }
+        }*/
         return sql.toString();
     }
 
@@ -160,10 +161,10 @@ public class SQLHelper {
         return builder.toString();
     }
 
-    private static String generateOrder(String order) {
+    private static String generateOrder(String sort) {
         StringBuilder builder = new StringBuilder();
-        if (StringUtil.isNotEmpty(order)) {
-            builder.append(" order by ").append(order);
+        if (StringUtil.isNotEmpty(sort)) {
+            builder.append(" order by ").append(sort);
         }
         return builder.toString();
     }

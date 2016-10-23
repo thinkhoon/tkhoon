@@ -6,7 +6,7 @@ import java.util.List;
 
 public class ClassHelper {
 
-    private static final String packageName = ConfigHelper.getStringProperty("package");
+    private static final String packageName = ConfigHelper.getStringProperty("app.package");
 
     public static List<Class<?>> getClassListByPackage(String pkg) {
         return ClassUtil.getClassList(pkg, true);
@@ -14,10 +14,6 @@ public class ClassHelper {
 
     public static List<Class<?>> getClassListBySuper(Class<?> superClass) {
         return ClassUtil.getClassListBySuper(packageName, superClass);
-    }
-
-    public static List<Class<?>> getClassListByInterface(Class<?> interfaceClass) {
-        return ClassUtil.getClassListByInterface(packageName, interfaceClass);
     }
 
     public static List<Class<?>> getClassListByAnnotation(Class<? extends Annotation> annotationClass) {

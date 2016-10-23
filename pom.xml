@@ -52,19 +52,6 @@
             <version>2.2.2</version>
         </dependency>
 
-        <!-- Velocity -->
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity</artifactId>
-            <version>1.7</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-lang</groupId>
-                    <artifactId>commons-lang</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Apache Commons -->
         <dependency>
             <groupId>commons-lang</groupId>
@@ -104,7 +91,6 @@
     </dependencies>
 
     <build>
-        <finalName>tkhoon-framework</finalName>
         <plugins>
             <!-- Compile -->
             <plugin>
@@ -118,5 +104,13 @@
             </plugin>
         </plugins>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>osc</id>
+            <name>OSC</name>
+            <url>http://maven.oschina.net/content/repositories/thirdparty/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
