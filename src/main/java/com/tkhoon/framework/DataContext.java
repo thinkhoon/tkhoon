@@ -3,6 +3,7 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.CodecUtil;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,7 @@ public class DataContext {
         DataContext dataContext = new DataContext();
         dataContext.request = request;
         dataContext.response = response;
-        dataContextContainer.set(dataContext);   
+        dataContextContainer.set(dataContext);
     }
 
     // 销毁
@@ -36,22 +37,22 @@ public class DataContext {
     }
 
     // 获取 Request
-    private static HttpServletRequest getRequest() {
+    public static HttpServletRequest getRequest() {
         return getInstance().request;
     }
 
     // 获取 Response
-    private static HttpServletResponse getResponse() {
+    public static HttpServletResponse getResponse() {
         return getInstance().response;
     }
 
     // 获取 Session
-    private static HttpSession getSession() {
+    public static HttpSession getSession() {
         return getRequest().getSession();
     }
 
     // 获取 Servlet Context
-    private static javax.servlet.ServletContext getServletContext() {
+    public static javax.servlet.ServletContext getServletContext() {
         return getRequest().getServletContext();
     }
 
@@ -151,7 +152,7 @@ public class DataContext {
 
         // 将数据放入 Cookie 中
         public static void put(String key, Object value) {
-            String strValue = CodecUtil.encodeForUTF8(CastUtil.castString(value));
+            String strValue = CodecUtil.urlEncode(CastUtil.castString(value));
             javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(key, strValue);
             getResponse().addCookie(cookie);
         }
@@ -164,7 +165,7 @@ public class DataContext {
             if (ArrayUtil.isNotEmpty(cookieArray)) {
                 for (javax.servlet.http.Cookie cookie : cookieArray) {
                     if (key.equals(cookie.getName())) {
-                        value = (T) CodecUtil.decodeForUTF8(cookie.getValue());
+                        value = (T) CodecUtil.urlDecode(cookie.getValue());
                         break;
                     }
                 }

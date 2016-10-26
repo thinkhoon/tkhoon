@@ -10,17 +10,45 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClassUtil {
 
-    private static final Logger logger = Logger.getLogger(ClassUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ClassUtil.class);
+
+    // 获取类加载器
+    public static ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
+    }
+
+    // 获取类路径
+    public static String getClassPath() {
+        String classpath = "";
+        URL resource = getClassLoader().getResource("");
+        if (resource != null) {
+            classpath = resource.getPath();
+        }
+        return classpath;
+    }
+
+    // 加载类
+    public static Class<?> loadClass(String className, boolean isInitialized) {
+        Class<?> cls;
+        try {
+            cls = Class.forName(className, isInitialized, getClassLoader());
+        } catch (ClassNotFoundException e) {
+            logger.error("加载类出错！", e);
+            throw new RuntimeException(e);
+        }
+        return cls;
+    }
 
     // 获取指定包名下的所有类
     public static List<Class<?>> getClassList(String packageName, boolean isRecursive) {
         List<Class<?>> classList = new ArrayList<Class<?>>();
         try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(packageName.replace(".", "/"));
+            Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url != null) {
@@ -38,7 +66,7 @@ public class ClassUtil {
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
                                 if (isRecursive || className.substring(0, className.lastIndexOf(".")).equals(packageName)) {
-                                    classList.add(Class.forName(className));
+                                    classList.add(loadClass(className, false));
                                 }
                             }
                         }
@@ -56,7 +84,7 @@ public class ClassUtil {
     public static List<Class<?>> getClassListByAnnotation(String packageName, Class<? extends Annotation> annotationClass) {
         List<Class<?>> classList = new ArrayList<Class<?>>();
         try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(packageName.replace(".", "/"));
+            Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url != null) {
@@ -73,7 +101,7 @@ public class ClassUtil {
                             String jarEntryName = jarEntry.getName();
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = Class.forName(className);
+                                Class<?> cls = loadClass(className, false);
                                 if (cls.isAnnotationPresent(annotationClass)) {
                                     classList.add(cls);
                                 }
@@ -93,7 +121,7 @@ public class ClassUtil {
     public static List<Class<?>> getClassListBySuper(String packageName, Class<?> superClass) {
         List<Class<?>> classList = new ArrayList<Class<?>>();
         try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(packageName.replace(".", "/"));
+            Enumeration<URL> urls = getClassLoader().getResources(packageName.replace(".", "/"));
             while (urls.hasMoreElements()) {
                 URL url = urls.nextElement();
                 if (url != null) {
@@ -110,45 +138,8 @@ public class ClassUtil {
                             String jarEntryName = jarEntry.getName();
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = Class.forName(className);
+                                Class<?> cls = loadClass(className, false);
                                 if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
-                                    classList.add(cls);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("获取类出错！", e);
-            throw new RuntimeException(e);
-        }
-        return classList;
-    }
-
-    // 获取指定包名下指定接口的所有实现类
-    public static List<Class<?>> getClassListByInterface(String packageName, Class<?> interfaceClass) {
-        List<Class<?>> classList = new ArrayList<Class<?>>();
-        try {
-            Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(packageName.replace(".", "/"));
-            while (urls.hasMoreElements()) {
-                URL url = urls.nextElement();
-                if (url != null) {
-                    String protocol = url.getProtocol();
-                    if (protocol.equals("file")) {
-                        String packagePath = url.getPath();
-                        addClassByInterface(classList, packagePath, packageName, interfaceClass);
-                    } else if (protocol.equals("jar")) {
-                        JarURLConnection jarURLConnection = (JarURLConnection) url.openConnection();
-                        JarFile jarFile = jarURLConnection.getJarFile();
-                        Enumeration<JarEntry> jarEntries = jarFile.entries();
-                        while (jarEntries.hasMoreElements()) {
-                            JarEntry jarEntry = jarEntries.nextElement();
-                            String jarEntryName = jarEntry.getName();
-                            if (jarEntryName.endsWith(".class")) {
-                                String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = Class.forName(className);
-                                if (interfaceClass.isAssignableFrom(cls) && !interfaceClass.equals(cls)) {
                                     classList.add(cls);
                                 }
                             }
@@ -171,12 +162,12 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        classList.add(Class.forName(className));
+                        classList.add(loadClass(className, false));
                     } else {
                         if (isRecursive) {
                             String subPackagePath = getSubPackagePath(packagePath, fileName);
                             String subPackageName = getSubPackageName(packageName, fileName);
-                            addClass(classList, subPackagePath, subPackageName, isRecursive);
+                            addClass(classList, subPackagePath, subPackageName, true);
                         }
                     }
                 }
@@ -228,7 +219,7 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        Class<?> cls = Class.forName(className);
+                        Class<?> cls = loadClass(className, false);
                         if (cls.isAnnotationPresent(annotationClass)) {
                             classList.add(cls);
                         }
@@ -253,7 +244,7 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        Class<?> cls = Class.forName(className);
+                        Class<?> cls = loadClass(className, false);
                         if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
                             classList.add(cls);
                         }
@@ -268,40 +259,5 @@ public class ClassUtil {
             logger.error("添加类出错！", e);
             throw new RuntimeException(e);
         }
-    }
-
-    private static void addClassByInterface(List<Class<?>> classList, String packagePath, String packageName, Class<?> interfaceClass) {
-        try {
-            File[] files = getClassFiles(packagePath);
-            if (files != null) {
-                for (File file : files) {
-                    String fileName = file.getName();
-                    if (file.isFile()) {
-                        String className = getClassName(packageName, fileName);
-                        Class<?> cls = Class.forName(className);
-                        if (interfaceClass.isAssignableFrom(cls) && !interfaceClass.equals(cls)) {
-                            classList.add(cls);
-                        }
-                    } else {
-                        String subPackagePath = getSubPackagePath(packagePath, fileName);
-                        String subPackageName = getSubPackageName(packageName, fileName);
-                        addClassByInterface(classList, subPackagePath, subPackageName, interfaceClass);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.error("添加类出错！", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    // 获取类路径
-    public static String getClassPath() {
-        String classpath = "";
-        URL resource = Thread.currentThread().getContextClassLoader().getResource("");
-        if (resource != null) {
-            classpath = resource.getPath();
-        }
-        return classpath;
     }
 }

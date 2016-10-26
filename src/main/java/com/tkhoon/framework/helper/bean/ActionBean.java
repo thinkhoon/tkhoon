@@ -1,4 +1,4 @@
-package com.tkhoon.framework.bean;
+package com.tkhoon.framework.helper.bean;
 
 import java.lang.reflect.Method;
 
@@ -16,15 +16,7 @@ public class ActionBean {
         return actionClass;
     }
 
-    public void setActionClass(Class<?> actionClass) {
-        this.actionClass = actionClass;
-    }
-
     public Method getActionMethod() {
         return actionMethod;
-    }
-
-    public void setActionMethod(Method actionMethod) {
-        this.actionMethod = actionMethod;
     }
 }
