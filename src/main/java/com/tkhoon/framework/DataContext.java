@@ -37,22 +37,22 @@ public class DataContext {
     }
 
     // 获取 Request
-    public static HttpServletRequest getRequest() {
+    private static HttpServletRequest getRequest() {
         return getInstance().request;
     }
 
     // 获取 Response
-    public static HttpServletResponse getResponse() {
+    private static HttpServletResponse getResponse() {
         return getInstance().response;
     }
 
     // 获取 Session
-    public static HttpSession getSession() {
+    private static HttpSession getSession() {
         return getRequest().getSession();
     }
 
     // 获取 Servlet Context
-    public static javax.servlet.ServletContext getServletContext() {
+    private static javax.servlet.ServletContext getServletContext() {
         return getRequest().getServletContext();
     }
 
@@ -152,7 +152,7 @@ public class DataContext {
 
         // 将数据放入 Cookie 中
         public static void put(String key, Object value) {
-            String strValue = CodecUtil.urlEncode(CastUtil.castString(value));
+            String strValue = CodecUtil.encodeForUTF8(CastUtil.castString(value));
             javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(key, strValue);
             getResponse().addCookie(cookie);
         }
@@ -165,7 +165,7 @@ public class DataContext {
             if (ArrayUtil.isNotEmpty(cookieArray)) {
                 for (javax.servlet.http.Cookie cookie : cookieArray) {
                     if (key.equals(cookie.getName())) {
-                        value = (T) CodecUtil.urlDecode(cookie.getValue());
+                        value = (T) CodecUtil.decodeForUTF8(cookie.getValue());
                         break;
                     }
                 }

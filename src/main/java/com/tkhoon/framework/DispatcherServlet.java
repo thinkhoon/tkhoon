@@ -1,16 +1,12 @@
 package com.tkhoon.framework;
 
+import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.Page;
+import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
-import com.tkhoon.framework.exception.AccessException;
-import com.tkhoon.framework.exception.PermissionException;
-import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
-import com.tkhoon.framework.helper.ConfigHelper;
-import com.tkhoon.framework.helper.UploadHelper;
-import com.tkhoon.framework.helper.bean.ActionBean;
-import com.tkhoon.framework.helper.bean.RequestBean;
+import com.tkhoon.framework.helper.InitHelper;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
@@ -25,155 +21,134 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 @WebServlet(urlPatterns = "/*", loadOnStartup = 0)
 public class DispatcherServlet extends HttpServlet {
 
-    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
-
-    // 获取相关配置项
-    private static final String homePage = ConfigHelper.getConfigString(FrameworkConstant.APP_HOME_PAGE);
-    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
-    private static final String forbiddenURL = ConfigHelper.getConfigString(FrameworkConstant.APP_FORBIDDEN_URL);
+    private static final Logger logger = Logger.getLogger(DispatcherServlet.class);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
-        // 初始化相关配置
-        ServletContext servletContext = config.getServletContext();
-        UploadHelper.init(servletContext);
+        // 初始化 Helper 类
+        InitHelper.init();
+        // 添加 Servlet 映射
+        addServletMapping(config.getServletContext());
     }
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取当前请求相关数据
         String currentRequestMethod = request.getMethod();
-        String currentRequestPath = WebUtil.getRequestPath(request);
+        String currentRequestURL = request.getPathInfo();
         if (logger.isDebugEnabled()) {
-            logger.debug("[tkhoon] {}:{}", currentRequestMethod, currentRequestPath);
+            logger.debug(currentRequestMethod + ":" + currentRequestURL);
         }
         // 将“/”请求重定向到首页
-        if (currentRequestPath.equals("/")) {
-            if (StringUtil.isNotEmpty(homePage)) {
-                WebUtil.redirectRequest(homePage, request, response);
-            }
+        if (currentRequestURL.equals("/")) {
+            response.sendRedirect("/static/page/index.html");
             return;
         }
-        // 去掉当前请求路径末尾的“/”
-        if (currentRequestPath.endsWith("/")) {
-            currentRequestPath = currentRequestPath.substring(0, currentRequestPath.length() - 1);
+        // 去掉请求最后的“/”
+        if (currentRequestURL.endsWith("/")) {
+            currentRequestURL = currentRequestURL.substring(0, currentRequestURL.length() - 1);
         }
-        // 定义一个 JSP 映射标志（默认为映射失败）
-        boolean jspMapped = false;
-        // 初始化 DataContext
-        DataContext.init(request, response);
+        // 定义一个映射标志（默认为映射失败）
+        boolean mapped = false;
         try {
+            // 初始化 DataContext
+            DataContext.init(request, response);
+            // 获取请求参数映射（包括：Query String 与 Form Data）
+            Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
             // 获取并遍历 Action 映射
             Map<RequestBean, ActionBean> actionMap = ActionHelper.getActionMap();
             for (Map.Entry<RequestBean, ActionBean> actionEntry : actionMap.entrySet()) {
                 // 从 RequestBean 中获取 Request 相关属性
                 RequestBean requestBean = actionEntry.getKey();
+                String requestURL = requestBean.getRequestURL(); // 正则表达式
                 String requestMethod = requestBean.getRequestMethod();
-                String requestPath = requestBean.getRequestPath(); // 正则表达式
-                // 获取请求路径匹配器（使用正则表达式匹配请求路径并从中获取相应的请求参数）
-                Matcher requestPathMatcher = Pattern.compile(requestPath).matcher(currentRequestPath);
-                // 判断请求方法与请求路径是否同时匹配
-                if (requestMethod.equalsIgnoreCase(currentRequestMethod) && requestPathMatcher.matches()) {
-                    // 获取 ActionBean 及其相关属性
+                // 获取正则表达式匹配器（用于匹配请求 URL 并从中获取相应的请求参数）
+                Matcher matcher = Pattern.compile(requestURL).matcher(currentRequestURL);
+                // 判断请求方法与请求 URL 是否同时匹配
+                if (requestMethod.equalsIgnoreCase(currentRequestMethod) && matcher.matches()) {
+                    // 获取 Action 对象
                     ActionBean actionBean = actionEntry.getValue();
-                    Class<?> actionClass = actionBean.getActionClass();
-                    Method actionMethod = actionBean.getActionMethod();
                     // 创建 Action 方法参数列表
-                    List<Object> actionMethodParamList = createActionMethodParamList(request, requestPathMatcher, actionBean);
-                    // 调用 Action 方法
-                    invokeActionMethod(request, response, actionClass, actionMethod, actionMethodParamList);
-                    // JSP 映射成功
-                    jspMapped = true;
+                    List<Object> paramList = createParamList(requestParamMap, matcher);
+                    // 处理 Action 方法
+                    handleActionMethod(request, response, actionBean, paramList);
+                    // 设置为映射成功
+                    mapped = true;
                     // 若成功匹配，则终止循环
                     break;
                 }
             }
-        } catch (UploadException e) {
-            logger.error("文件上传出错！", e);
-        } catch (Exception e) {
-            logger.error("执行 DispatcherServlet 出错！", e);
         } finally {
             // 销毁 DataContext
             DataContext.destroy();
         }
-        // 若 JSP 映射失败，则根据默认路由规则转发请求
-        if (!jspMapped && StringUtil.isNotEmpty(jspPath)) {
-            // 获取路径（默认路由规则：/{1}/{2} => /xxx/{1}_{2}.jsp）
-            String path = jspPath + currentRequestPath.substring(1).replace("/", "_") + ".jsp";
+        // 若映射失败，则根据默认路由规则转发请求
+        if (!mapped) {
+            // 获取路径（默认路由规则：/{1}/{2} => /dynamic/jsp/{1}_{2}.jsp）
+            String path = "/dynamic/jsp/" + currentRequestURL.substring(1).replace("/", "_") + ".jsp";
             // 转发请求
-            request.setAttribute("path", path);
-            WebUtil.forwardRequest(path, request, response);
+            WebUtil.forwordRequest(path, request, response);
         }
     }
 
-    private List<Object> createActionMethodParamList(HttpServletRequest request, Matcher requestPathMatcher, ActionBean actionBean) throws Exception {
-        // 定义参数列表
-        List<Object> paramList = new ArrayList<Object>();
-        // 获取 Action 方法参数类型
-        Class<?>[] actionParamTypes = actionBean.getActionMethod().getParameterTypes();
-        // 添加路径参数列表（请求路径中的带占位符参数）
-        paramList.addAll(createPathParamList(requestPathMatcher, actionParamTypes));
-        // 分两种情况进行处理
-        if (UploadHelper.isMultipart(request)) {
-            // 添加 Multipart 请求参数列表
-            paramList.addAll(UploadHelper.createMultipartParamList(request));
-        } else {
-            // 添加普通请求参数列表（包括 Query String 与 Form Data）
-            Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
-            if (MapUtil.isNotEmpty(requestParamMap)) {
-                paramList.add(requestParamMap);
-            }
-        }
-        // 返回参数列表
-        return paramList;
+    private void addServletMapping(ServletContext context) {
+        // 用 DefaultServlet 映射所有静态资源
+        ServletRegistration defaultServletRegistration = context.getServletRegistration("default");
+        defaultServletRegistration.addMapping("/favicon.ico", "/static/*", "/index.html");
+        // 用 JspServlet 映射所有 JSP 请求
+        ServletRegistration jspServletRegistration = context.getServletRegistration("jsp");
+        jspServletRegistration.addMapping("/dynamic/jsp/*");
+        // 用 UploadServlet 映射 /upload.do 请求
+        ServletRegistration uploadServletRegistration = context.getServletRegistration("upload");
+        uploadServletRegistration.addMapping("/upload.do");
     }
 
-    private List<Object> createPathParamList(Matcher requestPathMatcher, Class<?>[] actionParamTypes) {
-        // 定义参数列表
+    private List<Object> createParamList(Map<String, String> requestParamMap, Matcher matcher) {
         List<Object> paramList = new ArrayList<Object>();
         // 遍历正则表达式中所匹配的组
-        for (int i = 1; i <= requestPathMatcher.groupCount(); i++) {
-            // 获取请求参数
-            String param = requestPathMatcher.group(i);
-            // 获取参数类型（支持四种类型：int/Integer、long/Long、double/Double、String）
-            Class<?> paramType = actionParamTypes[i - 1];
-            if (paramType.equals(int.class) || paramType.equals(Integer.class)) {
-                paramList.add(CastUtil.castInt(param));
-            } else if (paramType.equals(long.class) || paramType.equals(Long.class)) {
-                paramList.add(CastUtil.castLong(param));
-            } else if (paramType.equals(double.class) || paramType.equals(Double.class)) {
-                paramList.add(CastUtil.castDouble(param));
-            } else if (paramType.equals(String.class)) {
+        for (int i = 1; i <= matcher.groupCount(); i++) {
+            String param = matcher.group(i);
+            // 若为数字，则需要强制转型，并放入参数列表中
+            // 注意：必须转型为低级别类型（低级别类型可安全转换为高级别类型使用）
+            if (StringUtil.isNumber(param)) {
+                if (StringUtil.isDigits(param)) {
+                    paramList.add(CastUtil.castInt(param));
+                } else {
+                    paramList.add(CastUtil.castFloat(param));
+                }
+            } else {
                 paramList.add(param);
             }
         }
-        // 返回参数列表
+        // 向参数列表中添加请求参数映射
+        if (MapUtil.isNotEmpty(requestParamMap)) {
+            paramList.add(requestParamMap);
+        }
         return paramList;
     }
 
-    private void invokeActionMethod(HttpServletRequest request, HttpServletResponse response, Class<?> actionClass, Method actionMethod, List<Object> actionMethodParamList) {
+    private void handleActionMethod(HttpServletRequest request, HttpServletResponse response, ActionBean actionBean, List<Object> paramList) {
+        // 从 ActionBean 中获取 Action 相关属性
+        Class<?> actionClass = actionBean.getActionClass();
+        Method actionMethod = actionBean.getActionMethod();
         // 从 BeanHelper 中创建 Action 实例
         Object actionInstance = BeanHelper.getBean(actionClass);
         // 调用 Action 方法
         Object actionMethodResult;
         try {
-            Class<?>[] paramTypes = actionMethod.getParameterTypes();
-            if (paramTypes.length != actionMethodParamList.size()) {
-                throw new RuntimeException("由于参数不匹配，无法调用 Action 方法！");
-            }
             actionMethod.setAccessible(true); // 取消类型安全检测（可提高反射性能）
-            actionMethodResult = actionMethod.invoke(actionInstance, actionMethodParamList.toArray());
+            actionMethodResult = actionMethod.invoke(actionInstance, paramList.toArray());
         } catch (Exception e) {
             // 处理 Action 方法异常
             handleActionMethodException(request, response, e);
@@ -185,23 +160,18 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleActionMethodException(HttpServletRequest request, HttpServletResponse response, Exception e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof AccessException) {
-            // 分两种情况进行处理
+        if (e.getCause() instanceof AuthException) {
+            // 若为认证异常，则分两种情况进行处理
             if (WebUtil.isAJAX(request)) {
-                // 若为 AJAX 请求，则发送 FORBIDDEN(403) 错误
-                WebUtil.sendError(HttpServletResponse.SC_FORBIDDEN, response);
+                // 若为 AJAX 请求，则发送 403 错误
+                WebUtil.sendError(403, response);
             } else {
                 // 否则重定向到首页
-                WebUtil.redirectRequest("/", request, response);
+                WebUtil.redirectRequest("/", response);
             }
-        } else if (cause instanceof PermissionException) {
-            // 若为权限异常，则跳转到 Forbidden URL
-            WebUtil.redirectRequest(forbiddenURL, request, response);
         } else {
             // 若为其他异常，则记录错误日志
             logger.error("调用 Action 方法出错！", e);
-            throw new RuntimeException(e); // 这里需要向上抛出异常，否则无法定位到错误页面
         }
     }
 
@@ -209,15 +179,9 @@ public class DispatcherServlet extends HttpServlet {
         // 判断返回值类型
         if (actionMethodResult != null) {
             if (actionMethodResult instanceof Result) {
-                // 若为 Result 类型，则需要分两种情况进行处理
+                // 若为 Result 类型，则转换为 JSON 格式并写入响应中
                 Result result = (Result) actionMethodResult;
-                if (UploadHelper.isMultipart(request)) {
-                    // 对于 multipart 类型，说明是文件上传，需要转换为 HTML 格式并写入响应中
-                    WebUtil.writeHTML(response, result);
-                } else {
-                    // 对于其它类型，统一转换为 JSON 格式并写入响应中
-                    WebUtil.writeJSON(response, result);
-                }
+                WebUtil.writeJSON(response, result);
             } else if (actionMethodResult instanceof Page) {
                 // 若为 Page 类型，则 转发 或 重定向 到相应的页面中
                 Page page = (Page) actionMethodResult;
@@ -225,10 +189,10 @@ public class DispatcherServlet extends HttpServlet {
                     // 获取路径
                     String path = page.getPath();
                     // 重定向请求
-                    WebUtil.redirectRequest(path, request, response);
+                    WebUtil.redirectRequest(path, response);
                 } else {
                     // 获取路径
-                    String path = jspPath + page.getPath();
+                    String path = "/dynamic/jsp/" + page.getPath();
                     // 初始化请求属性
                     Map<String, Object> data = page.getData();
                     if (MapUtil.isNotEmpty(data)) {
@@ -237,7 +201,7 @@ public class DispatcherServlet extends HttpServlet {
                         }
                     }
                     // 转发请求
-                    WebUtil.forwardRequest(path, request, response);
+                    WebUtil.forwordRequest(path, request, response);
                 }
             }
         }

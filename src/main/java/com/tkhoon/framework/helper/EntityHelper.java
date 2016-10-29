@@ -5,17 +5,23 @@ import com.tkhoon.framework.base.BaseEntity;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class EntityHelper {
+
+    private static final Logger logger = Logger.getLogger(EntityHelper.class);
 
     private static final Map<Class<?>, Map<String, String>> entityMap = new HashMap<Class<?>, Map<String, String>>(); // Entity 类 => (列名 => 字段名)
 
     static {
+        if (logger.isDebugEnabled()) {
+            logger.debug("初始化 EntityHelper");
+        }
         // 获取并遍历所有 Entity 类
         List<Class<?>> entityClassList = ClassHelper.getClassListBySuper(BaseEntity.class);
         for (Class<?> entityClass : entityClassList) {

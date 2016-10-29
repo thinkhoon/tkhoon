@@ -1,22 +1,33 @@
 package com.tkhoon.framework.helper;
 
-import com.tkhoon.framework.util.PropsUtil;
-
+import com.tkhoon.framework.util.FileUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.util.Properties;
+
+import org.apache.log4j.Logger;
 
 public class ConfigHelper {
 
-    private static final Properties configProps = PropsUtil.loadProps("config.properties");
+    private static final Logger logger = Logger.getLogger(ConfigHelper.class);
 
-    public static String getConfigString(String key) {
-        return PropsUtil.getString(configProps, key);
+    private static final Properties configProperties = FileUtil.loadPropFile("config.properties");
+
+    public static String getStringProperty(String key) {
+        String value = "";
+        if (configProperties.containsKey(key)) {
+            value = configProperties.getProperty(key);
+        } else {
+            logger.error("无法在 config.properties 文件中获取属性：" + key);
+        }
+        return value;
     }
 
-    public static int getConfigNumber(String key) {
-        return PropsUtil.getNumber(configProps, key);
-    }
-
-    public static boolean getConfigBoolean(String key) {
-        return PropsUtil.getBoolean(configProps, key);
+    public static int getNumberProperty(String key) {
+        int value = 0;
+        String sValue = getStringProperty(key);
+        if (StringUtil.isNumber(sValue)) {
+            value = Integer.parseInt(sValue);
+        }
+        return value;
     }
 }

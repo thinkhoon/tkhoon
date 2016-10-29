@@ -8,14 +8,16 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 public class IOCHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(IOCHelper.class);
+    private static final Logger logger = Logger.getLogger(IOCHelper.class);
 
     static {
+        if (logger.isDebugEnabled()) {
+            logger.debug("初始化 IOCHelper");
+        }
         try {
             // 获取并遍历所有的 Bean 类
             Map<Class<?>, Object> beanMap = BeanHelper.getBeanMap();
@@ -32,16 +34,27 @@ public class IOCHelper {
                         if (beanField.isAnnotationPresent(Inject.class)) {
                             // 获取 Bean 字段对应的接口
                             Class<?> interfaceClass = beanField.getType();
-                            // 获取 Bean 字段对应的实现类
-                            Class<?> implementClass = findImplementClass(interfaceClass);
+                            // 判断接口上是否标注了 @Impl 注解
+                            Class<?> implementClass = null;
+                            if (interfaceClass.isAnnotationPresent(Impl.class)) {
+                                // 获取强制指定的实现类
+                                implementClass = interfaceClass.getAnnotation(Impl.class).value();
+                            } else {
+                                // 获取该接口所有的实现类
+                                List<Class<?>> implementClassList = ClassHelper.getClassListByInterface(interfaceClass);
+                                if (CollectionUtil.isNotEmpty(implementClassList)) {
+                                    // 获取第一个实现类
+                                    implementClass = implementClassList.get(0);
+                                }
+                            }
                             // 若存在实现类，则执行以下代码
                             if (implementClass != null) {
                                 // 从 Bean Map 中获取该实现类对应的实现类实例
                                 Object implementInstance = beanMap.get(implementClass);
                                 // 设置该 Bean 字段的值
                                 if (implementInstance != null) {
-                                    beanField.setAccessible(true); // 将字段设置为 public
-                                    beanField.set(beanInstance, implementInstance); // 设置字段初始值
+                                    beanField.setAccessible(true); // 取消类型安全检测（可提高反射性能）
+                                    beanField.set(beanInstance, implementInstance); // beanInstance 是普通实例，或 CGLib 动态代理实例（不能使 JDK 动态代理实例）
                                 }
                             }
                         }
@@ -51,23 +64,5 @@ public class IOCHelper {
         } catch (Exception e) {
             logger.error("初始化 IOCHelper 出错！", e);
         }
-    }
-
-    public static Class<?> findImplementClass(Class<?> interfaceClass) {
-        Class<?> implementClass = interfaceClass;
-        // 判断接口上是否标注了 @Impl 注解
-        if (interfaceClass.isAnnotationPresent(Impl.class)) {
-            // 获取强制指定的实现类
-            implementClass = interfaceClass.getAnnotation(Impl.class).value();
-        } else {
-            // 获取该接口所有的实现类
-            List<Class<?>> implementClassList = ClassHelper.getClassListBySuper(interfaceClass);
-            if (CollectionUtil.isNotEmpty(implementClassList)) {
-                // 获取第一个实现类
-                implementClass = implementClassList.get(0);
-            }
-        }
-        // 返回实现类对象
-        return implementClass;
     }
 }
