@@ -1,20 +1,18 @@
 package com.tkhoon.framework.cache;
 
-import com.tkhoon.framework.cache.impl.DefaultCacheManager;
-
 import java.util.List;
 
 public class Client {
 
     public static void main(String[] args) {
-        CacheManager cacheManager = DefaultCacheManager.getInstance();
+        CacheManager cacheManager = CacheManager.getInstance();
 
         Cache cache = cacheManager.createCache("sample_cache");
 
         cache.put("A", 1);
         cache.put("B", 2);
 
-        int a = (Integer) cache.get("A");
+        Integer a = cache.get("A");
         System.out.println("a: " + a);
 
         List<Object> valueList1 = cache.getAll();
