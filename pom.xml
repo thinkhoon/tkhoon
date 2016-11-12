@@ -5,8 +5,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tkhoon</groupId>
-    <artifactId>tkhoon-framework</artifactId>
+    <groupId>com.smart</groupId>
+    <artifactId>smart-framework</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
@@ -104,7 +104,7 @@
     </dependencies>
 
     <build>
-        <finalName>tkhoon-framework</finalName>
+        <finalName>${project.artifactId}</finalName>
         <plugins>
             <!-- Compile -->
             <plugin>

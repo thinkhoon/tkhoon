@@ -1,13 +1,17 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Aspect;
+import com.tkhoon.framework.annotation.Order;
 import com.tkhoon.framework.base.BaseAspect;
 import com.tkhoon.framework.proxy.Proxy;
 import com.tkhoon.framework.proxy.ProxyFactory;
 import com.tkhoon.framework.util.ObjectUtil;
 import com.tkhoon.framework.util.StringUtil;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +21,16 @@ public class AOPHelper {
 
     private static final Logger logger = Logger.getLogger(AOPHelper.class);
 
-    static {
+    private static final AOPHelper instance = new AOPHelper();
+
+    private AOPHelper() {
+    }
+
+    public static AOPHelper getInstance() {
+        return instance;
+    }
+
+    public void init() {
         if (logger.isDebugEnabled()) {
             logger.debug("初始化 AOPHelper");
         }
@@ -34,22 +47,34 @@ public class AOPHelper {
                 // 创建代理实例
                 Object proxyInstance = new ProxyFactory(targetClass, baseAspectList).createProxy();
                 // 获取目标实例（从 IOC 容器中获取）
-                Object targetInstance = BeanHelper.getBean(targetClass);
+                Object targetInstance = BeanHelper.getInstance().getBean(targetClass);
                 // 复制目标实例中的成员变量到代理实例中
                 ObjectUtil.copyFields(targetInstance, proxyInstance);
                 // 用代理实例覆盖目标实例（放入 IOC 容器中）
-                BeanHelper.getBeanMap().put(targetClass, proxyInstance);
+                BeanHelper.getInstance().getBeanMap().put(targetClass, proxyInstance);
             }
         } catch (Exception e) {
             logger.error("初始化 AOPHelper 出错！", e);
         }
     }
 
-    private static Map<Class<?>, List<Class<?>>> createAspectMap() throws Exception {
+    private Map<Class<?>, List<Class<?>>> createAspectMap() throws Exception {
         // 定义 Aspect Map
-        Map<Class<?>, List<Class<?>>> aspectMap = new HashMap<Class<?>, List<Class<?>>>();
-        // 获取并遍历所有的切面类
-        List<Class<?>> aspectClassList = ClassHelper.getClassListBySuper(BaseAspect.class);
+        Map<Class<?>, List<Class<?>>> aspectMap = new LinkedHashMap<Class<?>, List<Class<?>>>();
+        // 获取所有切面类
+        List<Class<?>> aspectClassList = ClassHelper.getInstance().getClassListBySuper(BaseAspect.class);
+        // 排序切面类
+        Collections.sort(aspectClassList, new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> aspect1, Class<?> aspect2) {
+                if (aspect1.isAnnotationPresent(Order.class)) {
+                    return aspect1.getAnnotation(Order.class).value() - aspect2.getAnnotation(Order.class).value();
+                } else {
+                    return aspect1.hashCode() - aspect2.hashCode();
+                }
+            }
+        });
+        // 遍历切面类
         for (Class<?> aspectClass : aspectClassList) {
             // 判断 @Aspect 注解是否存在
             if (aspectClass.isAnnotationPresent(Aspect.class)) {
@@ -65,7 +90,7 @@ public class AOPHelper {
         return aspectMap;
     }
 
-    private static List<Class<?>> createTargetClassList(Aspect aspect) throws Exception {
+    private List<Class<?>> createTargetClassList(Aspect aspect) throws Exception {
         // 初始化目标类列表
         List<Class<?>> targetClassList = new ArrayList<Class<?>>();
         // 获取 @Aspect 注解相关属性
@@ -76,13 +101,13 @@ public class AOPHelper {
             targetClassList.add(Class.forName(pkg + "." + cls));
         } else {
             // 否则（包名不为空）添加该包名下所有类
-            targetClassList.addAll(ClassHelper.getClassListByPackage(pkg));
+            targetClassList.addAll(ClassHelper.getInstance().getClassListByPackage(pkg));
         }
         // 返回目标类列表
         return targetClassList;
     }
 
-    private static Map<Class<?>, List<Proxy>> createTargetMap(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
+    private Map<Class<?>, List<Proxy>> createTargetMap(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
         // 定义 Target Map
         Map<Class<?>, List<Proxy>> targetMap = new HashMap<Class<?>, List<Proxy>>();
         // 遍历 Aspect Map
