@@ -3,7 +3,6 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.CodecUtil;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;

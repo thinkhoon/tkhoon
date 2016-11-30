@@ -3,6 +3,7 @@ package com.tkhoon.framework.helper;
 import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.StringUtil;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
 public class ConfigHelper {
@@ -11,7 +12,16 @@ public class ConfigHelper {
 
     private static final Properties configProperties = FileUtil.loadPropFile("config.properties");
 
-    public static String getStringProperty(String key) {
+    private static final ConfigHelper instance = new ConfigHelper();
+
+    private ConfigHelper() {
+    }
+
+    public static ConfigHelper getInstance() {
+        return instance;
+    }
+
+    public String getStringProperty(String key) {
         String value = "";
         if (configProperties.containsKey(key)) {
             value = configProperties.getProperty(key);
@@ -21,7 +31,7 @@ public class ConfigHelper {
         return value;
     }
 
-    public static int getNumberProperty(String key) {
+    public int getNumberProperty(String key) {
         int value = 0;
         String sValue = getStringProperty(key);
         if (StringUtil.isNumber(sValue)) {

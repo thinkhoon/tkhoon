@@ -5,8 +5,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.SuperManTradeRegistController</groupId>
-    <artifactId>SuperManTradeRegistController-framework</artifactId>
+    <groupId>com.tkhoon</groupId>
+    <artifactId>tkhoon-framework</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 

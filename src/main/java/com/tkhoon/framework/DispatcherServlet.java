@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 
 @WebServlet("/*")
@@ -49,12 +50,12 @@ public class DispatcherServlet extends HttpServlet {
         // 定义一个映射标志（默认为映射失败）
         boolean mapped = false;
         // 初始化 DataContext
-        DataContext.init(request, response);
+        DataContext.getInstance().init(request, response);
         // 获取请求参数映射（包括：Query String 与 Form Data）
         Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
         try {
             // 获取并遍历 Action 映射
-            Map<RequestBean, ActionBean> actionMap = ActionHelper.getActionMap();
+            Map<RequestBean, ActionBean> actionMap = ActionHelper.getInstance().getActionMap();
             for (Map.Entry<RequestBean, ActionBean> actionEntry : actionMap.entrySet()) {
                 // 从 RequestBean 中获取 Request 相关属性
                 RequestBean requestBean = actionEntry.getKey();
@@ -78,7 +79,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         } finally {
             // 销毁 DataContext
-            DataContext.destroy();
+            DataContext.getInstance().destroy();
         }
         // 若映射失败，则根据默认路由规则转发请求
         if (!mapped) {
@@ -118,7 +119,7 @@ public class DispatcherServlet extends HttpServlet {
         Class<?> actionClass = actionBean.getActionClass();
         Method actionMethod = actionBean.getActionMethod();
         // 从 BeanHelper 中创建 Action 实例
-        Object actionInstance = BeanHelper.getBean(actionClass);
+        Object actionInstance = BeanHelper.getInstance().getBean(actionClass);
         // 调用 Action 方法
         Object actionMethodResult;
         try {
