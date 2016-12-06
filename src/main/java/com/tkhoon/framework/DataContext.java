@@ -12,8 +12,8 @@ import javax.servlet.http.HttpSession;
 
 public class DataContext {
 
-    private static final ThreadLocal<DataContext> dataContextContainer = new ThreadLocal<DataContext>();
-
+      private static final ThreadLocal<DataContext> dataContextContainer = new ThreadLocal<DataContext>();
+    
     private HttpServletRequest request;
     private HttpServletResponse response;
 
