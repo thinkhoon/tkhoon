@@ -1,17 +1,19 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Aspect;
+import com.tkhoon.framework.annotation.Order;
 import com.tkhoon.framework.base.BaseAspect;
 import com.tkhoon.framework.proxy.Proxy;
 import com.tkhoon.framework.proxy.ProxyFactory;
 import com.tkhoon.framework.util.ObjectUtil;
 import com.tkhoon.framework.util.StringUtil;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 public class AOPHelper {
@@ -60,7 +62,18 @@ public class AOPHelper {
         Map<Class<?>, List<Class<?>>> aspectMap = new LinkedHashMap<Class<?>, List<Class<?>>>();
         // 获取所有切面类
         List<Class<?>> aspectClassList = ClassHelper.getInstance().getClassListBySuper(BaseAspect.class);
-        // 遍历所有切面类
+        // 排序切面类
+        Collections.sort(aspectClassList, new Comparator<Class<?>>() {
+            @Override
+            public int compare(Class<?> aspect1, Class<?> aspect2) {
+                if (aspect1.isAnnotationPresent(Order.class)) {
+                    return aspect1.getAnnotation(Order.class).value() - aspect2.getAnnotation(Order.class).value();
+                } else {
+                    return aspect1.hashCode() - aspect2.hashCode();
+                }
+            }
+        });
+        // 遍历切面类
         for (Class<?> aspectClass : aspectClassList) {
             // 判断 @Aspect 注解是否存在
             if (aspectClass.isAnnotationPresent(Aspect.class)) {
