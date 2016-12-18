@@ -22,6 +22,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 
 @WebServlet("/*")
@@ -49,7 +50,7 @@ public class DispatcherServlet extends HttpServlet {
         // 定义一个映射标志（默认为映射失败）
         boolean mapped = false;
         // 初始化 DataContext
-        DataContext.getInstance().init(request, response);
+        DataContext.init(request, response);
         // 获取请求参数映射（包括：Query String 与 Form Data）
         Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
         try {
@@ -78,7 +79,7 @@ public class DispatcherServlet extends HttpServlet {
             }
         } finally {
             // 销毁 DataContext
-            DataContext.getInstance().destroy();
+            DataContext.destroy();
         }
         // 若映射失败，则根据默认路由规则转发请求
         if (!mapped) {

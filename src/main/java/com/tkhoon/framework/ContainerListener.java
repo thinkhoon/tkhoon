@@ -6,7 +6,7 @@ import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.helper.EntityHelper;
 import com.tkhoon.framework.helper.IOCHelper;
-import com.tkhoon.framework.helper.ServiceHelper;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -15,7 +15,7 @@ import javax.servlet.annotation.WebListener;
 
 @WebListener
 public class ContainerListener implements ServletContextListener {
-  
+
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // 初始化 Helper 类
@@ -29,9 +29,8 @@ public class ContainerListener implements ServletContextListener {
         EntityHelper.getInstance().init();
         ActionHelper.getInstance().init();
         BeanHelper.getInstance().init();
-        ServiceHelper.getInstance().init();
-        IOCHelper.getInstance().init();
         AOPHelper.getInstance().init();
+        IOCHelper.getInstance().init();
     }
 
     @Override
