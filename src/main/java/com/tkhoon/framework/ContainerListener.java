@@ -1,11 +1,5 @@
 package com.tkhoon.framework;
 
-import com.tkhoon.framework.helper.AOPHelper;
-import com.tkhoon.framework.helper.ActionHelper;
-import com.tkhoon.framework.helper.BeanHelper;
-import com.tkhoon.framework.helper.DBHelper;
-import com.tkhoon.framework.helper.EntityHelper;
-import com.tkhoon.framework.helper.IOCHelper;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -18,18 +12,9 @@ public class ContainerListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // 初始化 Helper 类
-        initHelperClass();
+        tkhoon.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
-    }
-
-    private void initHelperClass() {
-        DBHelper.getInstance().init();
-        EntityHelper.getInstance().init();
-        ActionHelper.getInstance().init();
-        BeanHelper.getInstance().init();
-        AOPHelper.getInstance().init();
-        IOCHelper.getInstance().init();
     }
 
     @Override

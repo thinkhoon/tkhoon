@@ -1,6 +1,7 @@
 package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.OrderedRunner;
+import com.tkhoon.framework.tkhoon;
 import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.util.ClassUtil;
 import java.io.File;
@@ -14,6 +15,10 @@ import org.junit.runner.RunWith;
 public abstract class BaseTest {
 
     private static final Logger logger = Logger.getLogger(BaseTest.class);
+
+    static {
+        tkhoon.init();
+    }
 
     protected static void initSQL(String sqlPath) {
         try {

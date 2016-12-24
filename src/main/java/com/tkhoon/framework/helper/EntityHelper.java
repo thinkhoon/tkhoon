@@ -15,19 +15,11 @@ import org.apache.log4j.Logger;
 public class EntityHelper {
 
     private static final Logger logger = Logger.getLogger(EntityHelper.class);
-
-    private static final Map<Class<?>, Map<String, String>> entityMap = new HashMap<Class<?>, Map<String, String>>(); // Entity 类 => (列名 => 字段名)
-
     private static final EntityHelper instance = new EntityHelper();
 
+    private final Map<Class<?>, Map<String, String>> entityMap = new HashMap<Class<?>, Map<String, String>>(); // Entity 类 => (列名 => 字段名)
+
     private EntityHelper() {
-    }
-
-    public static EntityHelper getInstance() {
-        return instance;
-    }
-
-    public void init() {
         if (logger.isDebugEnabled()) {
             logger.debug("初始化 EntityHelper");
         }
@@ -59,6 +51,10 @@ public class EntityHelper {
                 }
             }
         }
+    }
+
+    public static EntityHelper getInstance() {
+        return instance;
     }
 
     public Map<Class<?>, Map<String, String>> getEntityMap() {
