@@ -1,7 +1,6 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.util.ClassUtil;
-
 import java.lang.annotation.Annotation;
 import java.util.List;
 
@@ -21,10 +20,6 @@ public class ClassHelper {
 
     public List<Class<?>> getClassListBySuper(Class<?> superClass) {
         return ClassUtil.getClassListBySuper(packageName, superClass);
-    }
-
-    public List<Class<?>> getClassListByInterface(Class<?> interfaceClass) {
-        return ClassUtil.getClassListByInterface(packageName, interfaceClass);
     }
 
     public List<Class<?>> getClassListByAnnotation(Class<? extends Annotation> annotationClass) {
