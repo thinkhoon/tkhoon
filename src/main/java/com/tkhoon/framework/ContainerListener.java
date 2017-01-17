@@ -11,7 +11,7 @@ public class ContainerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        // 初始化 Helper 类
+        // 初始化 Helper 类型
         tkhoon.init();
         // 添加 Servlet 映射  
         addServletMapping(sce.getServletContext());
