@@ -28,6 +28,8 @@ public class ContainerListener implements ServletContextListener {
         // 用 JspServlet 映射所有 JSP 请求 ,包括动态请求
         ServletRegistration jspServletRegistration = context.getServletRegistration("jsp");
         jspServletRegistration.addMapping("/dynamic/jsp/*");
+
+                jspServletRegistration.addMapping("/dynamic/jsp/*");
         // 用 UploadServlet 映射 /upload.do 请求
         ServletRegistration uploadServletRegistration = context.getServletRegistration("upload");
         uploadServletRegistration.addMapping("/upload.do");
