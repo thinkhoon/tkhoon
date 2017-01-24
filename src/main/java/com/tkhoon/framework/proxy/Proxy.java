@@ -2,5 +2,5 @@ package com.tkhoon.framework.proxy;
 
 public interface Proxy {
 
-    Object doProxy(ProxyChain proxyChain) throws Exception;
+    void doProxy(ProxyChain proxyChain) throws Exception;
 }

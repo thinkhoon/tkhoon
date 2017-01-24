@@ -9,18 +9,10 @@ import org.apache.log4j.Logger;
 public class ConfigHelper {
 
     private static final Logger logger = Logger.getLogger(ConfigHelper.class);
-    private static final ConfigHelper instance = new ConfigHelper();
 
-    private final Properties configProperties = FileUtil.loadPropFile("config.properties");
+    private static final Properties configProperties = FileUtil.loadPropFile("config.properties");
 
-    private ConfigHelper() {
-    }
-
-    public static ConfigHelper getInstance() {
-        return instance;
-    }
-
-    public String getStringProperty(String key) {
+    public static String getStringProperty(String key) {
         String value = "";
         if (configProperties.containsKey(key)) {
             value = configProperties.getProperty(key);
@@ -30,7 +22,7 @@ public class ConfigHelper {
         return value;
     }
 
-    public int getNumberProperty(String key) {
+    public static int getNumberProperty(String key) {
         int value = 0;
         String sValue = getStringProperty(key);
         if (StringUtil.isNumber(sValue)) {
