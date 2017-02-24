@@ -1,7 +1,6 @@
 package com.tkhoon.framework.bean;
 
 import com.tkhoon.framework.base.BaseBean;
-
 import java.util.HashMap;
 import java.util.Map;
 
