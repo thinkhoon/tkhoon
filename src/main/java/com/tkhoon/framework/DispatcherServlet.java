@@ -6,7 +6,6 @@ import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
 import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
-import com.tkhoon.framework.helper.InitHelper;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
@@ -18,10 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -29,18 +25,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 
-@WebServlet(urlPatterns = "/*", loadOnStartup = 0)
+@WebServlet("/*")
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger logger = Logger.getLogger(DispatcherServlet.class);
-
-    @Override
-    public void init(ServletConfig config) throws ServletException {
-        // 初始化 Helper 类
-        InitHelper.init();
-        // 添加 Servlet 映射
-        addServletMapping(config.getServletContext());
-    }
 
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -61,11 +49,11 @@ public class DispatcherServlet extends HttpServlet {
         }
         // 定义一个映射标志（默认为映射失败）
         boolean mapped = false;
+        // 初始化 DataContext
+        DataContext.init(request, response);
+        // 获取请求参数映射（包括：Query String 与 Form Data）
+        Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
         try {
-            // 初始化 DataContext
-            DataContext.init(request, response);
-            // 获取请求参数映射（包括：Query String 与 Form Data）
-            Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
             // 获取并遍历 Action 映射
             Map<RequestBean, ActionBean> actionMap = ActionHelper.getActionMap();
             for (Map.Entry<RequestBean, ActionBean> actionEntry : actionMap.entrySet()) {
@@ -100,18 +88,6 @@ public class DispatcherServlet extends HttpServlet {
             // 转发请求
             WebUtil.forwordRequest(path, request, response);
         }
-    }
-
-    private void addServletMapping(ServletContext context) {
-        // 用 DefaultServlet 映射所有静态资源
-        ServletRegistration defaultServletRegistration = context.getServletRegistration("default");
-        defaultServletRegistration.addMapping("/favicon.ico", "/static/*", "/index.html");
-        // 用 JspServlet 映射所有 JSP 请求
-        ServletRegistration jspServletRegistration = context.getServletRegistration("jsp");
-        jspServletRegistration.addMapping("/dynamic/jsp/*");
-        // 用 UploadServlet 映射 /upload.do 请求
-        ServletRegistration uploadServletRegistration = context.getServletRegistration("upload");
-        uploadServletRegistration.addMapping("/upload.do");
     }
 
     private List<Object> createParamList(Map<String, String> requestParamMap, Matcher matcher) {
