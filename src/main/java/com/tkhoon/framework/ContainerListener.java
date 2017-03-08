@@ -1,6 +1,5 @@
 package com.tkhoon.framework;
 
-import com.tkhoon.framework.helper.InitHelper;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -13,7 +12,7 @@ public class ContainerListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // 初始化 Helper 类
-        InitHelper.init();
+        tkhoon.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
     }

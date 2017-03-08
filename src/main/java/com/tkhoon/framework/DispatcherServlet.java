@@ -40,7 +40,7 @@ public class DispatcherServlet extends HttpServlet {
         }
         // 将“/”请求重定向到首页
         if (currentRequestURL.equals("/")) {
-            response.sendRedirect("/static/page/index.html");
+            response.sendRedirect(request.getContextPath() + "/static/page/index.html");
             return;
         }
         // 去掉请求最后的“/”
@@ -55,7 +55,7 @@ public class DispatcherServlet extends HttpServlet {
         Map<String, String> requestParamMap = WebUtil.getRequestParamMap(request);
         try {
             // 获取并遍历 Action 映射
-            Map<RequestBean, ActionBean> actionMap = ActionHelper.getActionMap();
+            Map<RequestBean, ActionBean> actionMap = ActionHelper.getInstance().getActionMap();
             for (Map.Entry<RequestBean, ActionBean> actionEntry : actionMap.entrySet()) {
                 // 从 RequestBean 中获取 Request 相关属性
                 RequestBean requestBean = actionEntry.getKey();
@@ -119,7 +119,7 @@ public class DispatcherServlet extends HttpServlet {
         Class<?> actionClass = actionBean.getActionClass();
         Method actionMethod = actionBean.getActionMethod();
         // 从 BeanHelper 中创建 Action 实例
-        Object actionInstance = BeanHelper.getBean(actionClass);
+        Object actionInstance = BeanHelper.getInstance().getBean(actionClass);
         // 调用 Action 方法
         Object actionMethodResult;
         try {
@@ -143,7 +143,7 @@ public class DispatcherServlet extends HttpServlet {
                 WebUtil.sendError(403, response);
             } else {
                 // 否则重定向到首页
-                WebUtil.redirectRequest("/", response);
+                WebUtil.redirectRequest(request.getContextPath() + "/", response);
             }
         } else {
             // 若为其他异常，则记录错误日志

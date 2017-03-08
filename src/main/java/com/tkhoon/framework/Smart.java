@@ -1,10 +1,16 @@
-package com.tkhoon.framework.helper;
+package com.tkhoon.framework;
 
+import com.tkhoon.framework.helper.AOPHelper;
+import com.tkhoon.framework.helper.ActionHelper;
+import com.tkhoon.framework.helper.BeanHelper;
+import com.tkhoon.framework.helper.DBHelper;
+import com.tkhoon.framework.helper.EntityHelper;
+import com.tkhoon.framework.helper.IOCHelper;
 import org.apache.log4j.Logger;
 
-public class InitHelper {
+public final class tkhoon {
 
-    private static final Logger logger = Logger.getLogger(InitHelper.class);
+    private static final Logger logger = Logger.getLogger(tkhoon.class);
 
     public static void init() {
         try {
@@ -13,9 +19,8 @@ public class InitHelper {
                 EntityHelper.class,
                 ActionHelper.class,
                 BeanHelper.class,
-                ServiceHelper.class,
-                IOCHelper.class,
                 AOPHelper.class,
+                IOCHelper.class,
             };
             for (Class<?> cls : classList) {
                 Class.forName(cls.getName());
