@@ -2,7 +2,6 @@ package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.proxy.Proxy;
 import com.tkhoon.framework.proxy.ProxyChain;
-
 import java.lang.reflect.Method;
 
 public abstract class BaseAspect implements Proxy {
