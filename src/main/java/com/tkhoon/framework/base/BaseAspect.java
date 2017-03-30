@@ -2,6 +2,7 @@ package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.proxy.Proxy;
 import com.tkhoon.framework.proxy.ProxyChain;
+
 import java.lang.reflect.Method;
 
 public abstract class BaseAspect implements Proxy {
@@ -16,7 +17,7 @@ public abstract class BaseAspect implements Proxy {
 
         begin();
         try {
-            if (filter(cls, method, params)) {
+            if (intercept(cls, method, params)) {
                 before(cls, method, params);
                 result = proxyChain.doProxyChain();
                 after(cls, method, params, result);
@@ -36,7 +37,7 @@ public abstract class BaseAspect implements Proxy {
     public void begin() {
     }
 
-    public boolean filter(Class<?> cls, Method method, Object[] params) throws Exception {
+    public boolean intercept(Class<?> cls, Method method, Object[] params) throws Exception {
         return true;
     }
 

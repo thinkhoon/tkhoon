@@ -6,7 +6,6 @@ import com.tkhoon.framework.helper.DBHelper;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.apache.log4j.Logger;
 
 public class TransactionAspect extends BaseAspect {
@@ -16,7 +15,7 @@ public class TransactionAspect extends BaseAspect {
     private static final DBHelper dbHelper = DBHelper.getInstance();
 
     @Override
-    public boolean filter(Class<?> cls, Method method, Object[] params) {
+    public boolean intercept(Class<?> cls, Method method, Object[] params) {
         return method.isAnnotationPresent(Transaction.class);
     }
 
