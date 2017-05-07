@@ -83,13 +83,15 @@ public class AOPHelper {
         }
     }
 
+
+
     private void addUserAspect(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
         // 获取切面类
         List<Class<?>> aspectClassList = ClassHelper.getInstance().getClassListBySuper(BaseAspect.class);
         // 排序切面类
         sortAspectClassList(aspectClassList);
         // 遍历切面类
-        for (Class<?> aspectClass : aspectClassList) {
+        for (Class<?> aspectClass : aspecdtClassList) {
             // 判断 @Aspect 注解是否存在
             if (aspectClass.isAnnotationPresent(Aspect.class)) {
                 // 获取 @Aspect 注解
