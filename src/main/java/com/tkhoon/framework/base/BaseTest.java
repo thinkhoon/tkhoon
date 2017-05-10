@@ -17,7 +17,7 @@ public abstract class BaseTest {
     private static final Logger logger = Logger.getLogger(BaseTest.class);
 
     static {
-        tkhoon.init();
+        tkhoon.init();  
     }
 
     protected static void initSQL(String sqlPath) {
