@@ -6,7 +6,6 @@ import com.tkhoon.framework.util.StringUtil;
 import java.sql.Connection;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.dbutils.QueryRunner;
 import org.apache.log4j.Logger;

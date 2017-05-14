@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 public class AOPHelper {
@@ -77,14 +76,13 @@ public class AOPHelper {
             for (Class<?> pluginAspectClass : pluginAspectClassList) {
                 // 创建插件切面类实例
                 PluginAspect pluginAspect = (PluginAspect) pluginAspectClass.newInstance();
+                // 初始化插件
+                pluginAspect.initPlugin();
                 // 将插件切面类及其所对应的目标类列表放入 Aspect Map 中
                 aspectMap.put(pluginAspectClass, pluginAspect.getTargetClassList());
             }
         }
     }
-
-
-
 
     private void addUserAspect(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
         // 获取切面类
@@ -92,7 +90,7 @@ public class AOPHelper {
         // 排序切面类
         sortAspectClassList(aspectClassList);
         // 遍历切面类
-        for (Class<?> aspectClass : aspecdtClassList) {
+        for (Class<?> aspectClass : aspectClassList) {
             // 判断 @Aspect 注解是否存在
             if (aspectClass.isAnnotationPresent(Aspect.class)) {
                 // 获取 @Aspect 注解
