@@ -6,6 +6,7 @@ import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.helper.EntityHelper;
 import com.tkhoon.framework.helper.IOCHelper;
+import com.tkhoon.framework.helper.PluginHelper;
 import org.apache.log4j.Logger;
 
 public final class tkhoon {
@@ -21,6 +22,7 @@ public final class tkhoon {
                 BeanHelper.class,
                 AOPHelper.class,
                 IOCHelper.class,
+                PluginHelper.class,
             };
             for (Class<?> cls : classList) {
                 Class.forName(cls.getName());
