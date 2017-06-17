@@ -2,6 +2,7 @@ package com.tkhoon.framework;
 
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.util.StringUtil;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -30,7 +31,7 @@ public class ContainerListener implements ServletContextListener {
         // 用 DefaultServlet 映射所有静态资源
         registerDefaultServlet(context);
         // 用 JspServlet 映射所有 JSP 请求
-        registerJspServlet(context);  
+        registerJspServlet(context);
         // 用 UploadServlet 映射 /upload.do 请求
         registerUploadServlet(context);
     }
