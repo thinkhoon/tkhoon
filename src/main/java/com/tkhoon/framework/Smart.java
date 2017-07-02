@@ -9,9 +9,9 @@ import com.tkhoon.framework.helper.IOCHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import org.apache.log4j.Logger;
 
-public final class tkhoon {
+public final class Smart {
 
-    private static final Logger logger = Logger.getLogger(tkhoon.class);
+    private static final Logger logger = Logger.getLogger(Smart.class);
 
     public static void init() {
         try {

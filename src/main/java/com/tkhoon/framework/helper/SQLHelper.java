@@ -15,18 +15,10 @@ import org.apache.log4j.Logger;
 public class SQLHelper {
 
     private static final Logger logger = Logger.getLogger(SQLHelper.class);
-    private static final SQLHelper instance = new SQLHelper();
 
-    private final Properties sqlProperties = FileUtil.loadPropFile("sql.properties");
+    private static final Properties sqlProperties = FileUtil.loadPropFile("sql.properties");
 
-    private SQLHelper() {
-    }
-
-    public static SQLHelper getInstance() {
-        return instance;
-    }
-
-    public String getSQL(String key) {
+    public static String getSQL(String key) {
         String value = "";
         if (sqlProperties.containsKey(key)) {
             value = sqlProperties.getProperty(key);
@@ -36,14 +28,14 @@ public class SQLHelper {
         return value;
     }
 
-    public String generateSelectSQL(Class<?> cls, String condition, String sort, Object... params) {
+    public static String generateSelectSQL(Class<?> cls, String condition, String sort, Object... params) {
         StringBuilder sql = new StringBuilder("select * from ").append(getTable(cls));
         sql.append(generateWhere(condition, params));
         sql.append(generateOrder(sort));
         return sql.toString();
     }
 
-    public String generateInsertSQL(Class<?> cls, Map<String, Object> fieldMap) {
+    public static String generateInsertSQL(Class<?> cls, Map<String, Object> fieldMap) {
         StringBuilder sql = new StringBuilder("insert into ").append(getTable(cls));
         if (MapUtil.isNotEmpty(fieldMap)) {
             int i = 0;
@@ -70,13 +62,13 @@ public class SQLHelper {
         return sql.toString();
     }
 
-    public String generateDeleteSQL(Class<?> cls, String condition, Object... params) {
+    public static String generateDeleteSQL(Class<?> cls, String condition, Object... params) {
         StringBuilder sql = new StringBuilder("delete from ").append(getTable(cls));
         sql.append(generateWhere(condition, params));
         return sql.toString();
     }
 
-    public String generateUpdateSQL(Class<?> cls, Map<String, Object> fieldMap, String condition, Object... params) {
+    public static String generateUpdateSQL(Class<?> cls, Map<String, Object> fieldMap, String condition, Object... params) {
         StringBuilder sql = new StringBuilder("update ").append(getTable(cls));
         if (MapUtil.isNotEmpty(fieldMap)) {
             sql.append(" set ");
@@ -96,18 +88,18 @@ public class SQLHelper {
         return sql.toString();
     }
 
-    public String generateSelectSQLForCount(Class<?> cls, String condition, Object... params) {
+    public static String generateSelectSQLForCount(Class<?> cls, String condition, Object... params) {
         StringBuilder sql = new StringBuilder("select count(*) from ").append(getTable(cls));
         sql.append(generateWhere(condition, params));
         return sql.toString();
     }
 
-    public String generateSelectSQLForPager(int pageNumber, int pageSize, Class<?> cls, String condition, String sort, Object... params) {
+    public static String generateSelectSQLForPager(int pageNumber, int pageSize, Class<?> cls, String condition, String sort, Object... params) {
         StringBuilder sql = new StringBuilder();
         String table = getTable(cls);
         String where = generateWhere(condition, params);
         String order = generateOrder(sort);
-        String dbType = DBHelper.getInstance().getDBType();
+        String dbType = DBHelper.getDBType();
         if (dbType.equalsIgnoreCase("mysql")) {
             int pageStart = (pageNumber - 1) * pageSize;
             int pageEnd = pageSize;
@@ -146,7 +138,7 @@ public class SQLHelper {
         return tableName;
     }
 
-    private String generateWhere(String condition, Object[] params) {
+    private static String generateWhere(String condition, Object[] params) {
         StringBuilder builder = new StringBuilder();
         if (StringUtil.isNotEmpty(condition)) {
             StringBuffer buffer = new StringBuffer();
@@ -169,7 +161,7 @@ public class SQLHelper {
         return builder.toString();
     }
 
-    private String generateOrder(String sort) {
+    private static String generateOrder(String sort) {
         StringBuilder builder = new StringBuilder();
         if (StringUtil.isNotEmpty(sort)) {
             builder.append(" order by ").append(sort);
@@ -177,7 +169,7 @@ public class SQLHelper {
         return builder.toString();
     }
 
-    private void appendSQLForMySQL(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
+    private static void appendSQLForMySQL(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
         /*
             select * from 表名 where 条件 order by 排序 limit 开始位置, 结束位置
          */
@@ -187,7 +179,7 @@ public class SQLHelper {
         sql.append(" limit ").append(pageStart).append(", ").append(pageEnd);
     }
 
-    private void appendSQLForOracle(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
+    private static void appendSQLForOracle(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
         /*
             select a.* from (
                 select rownum rn, t.* from 表名 t where 条件 order by 排序
@@ -200,7 +192,7 @@ public class SQLHelper {
         sql.append(") a where a.rn >= ").append(pageStart).append(" and a.rn < ").append(pageEnd);
     }
 
-    private void appendSQLForSQLServer(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
+    private static void appendSQLForSQLServer(StringBuilder sql, String table, String where, String order, int pageStart, int pageEnd) {
         /*
             select top 结束位置 * from 表名 where 条件 and id not in (
                 select top 开始位置 id from 表名 where 条件 order by 排序
