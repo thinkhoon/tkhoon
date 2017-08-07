@@ -4,7 +4,6 @@ import com.tkhoon.framework.annotation.Bean;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 public class BeanHelper {

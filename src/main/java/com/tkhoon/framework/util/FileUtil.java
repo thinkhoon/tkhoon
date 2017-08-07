@@ -1,8 +1,15 @@
 package com.tkhoon.framework.util;
 
+import com.tkhoon.framework.Constant;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.Properties;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -147,6 +154,34 @@ public class FileUtil {
         }
         if (!src.isFile()) {
             throw new RuntimeException("该路径不是文件！");
+        }
+    }
+
+    // 将字符串写入文件
+    public static void writeFile(String filePath, String fileContent) {
+        OutputStream os = null;
+        Writer w = null;
+        try {
+            FileUtil.createFile(filePath);
+            os = new BufferedOutputStream(new FileOutputStream(filePath));
+            w = new OutputStreamWriter(os, Constant.DEFAULT_CHARSET);
+            w.write(fileContent);
+            w.flush();
+        } catch (Exception e) {
+            logger.error("写入文件出错！", e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                if (w != null) {
+                    w.close();
+                }
+            } catch (Exception e) {
+                logger.error("释放资源出错！", e);
+                e.printStackTrace();
+            }
         }
     }
 }
