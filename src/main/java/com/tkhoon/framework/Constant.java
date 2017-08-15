@@ -10,7 +10,7 @@ public interface Constant {
 
     String SERVLET_DEFAULT = "default";
     String SERVLET_JSP = "jsp";
-    String SERVLET_UPLOAD = "upload";
+    String SERVLET_UPLOAD = "upload";  
 
     String REQUEST_FAVICON = "/favicon.ico";
     String REQUEST_UPLOAD = "/upload.do";
