@@ -1,7 +1,9 @@
 package com.tkhoon.framework.util;
 
-import com.tkhoon.framework.Constant;
+import com.tkhoon.framework.FrameworkConstant;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -10,7 +12,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-
 import org.apache.log4j.Logger;
 
 public class WebUtil {
@@ -22,7 +23,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("text/plain"); // 指定内容类型为纯文本格式
-            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
+            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -38,7 +39,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("application/json"); // 指定内容类型为 JSON 格式
-            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
+            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -54,7 +55,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("text/html"); // 指定内容类型为 HTML 格式
-            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
+            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -94,7 +95,7 @@ public class WebUtil {
         try {
             String method = request.getMethod();
             if (method.equalsIgnoreCase("put") || method.equalsIgnoreCase("delete")) {
-                String queryString = CodecUtil.decodeUTF8(StreamUtil.toString(request.getInputStream()));
+                String queryString = CodecUtil.decodeUTF8(StreamUtil.getString(request.getInputStream()));
                 if (StringUtil.isNotEmpty(queryString)) {
                     String[] qsArray = StringUtil.splitString(queryString, "&");
                     if (ArrayUtil.isNotEmpty(qsArray)) {
@@ -237,5 +238,18 @@ public class WebUtil {
             throw new RuntimeException(e);
         }
         return value;
+    }
+
+    // 获取 URL 内容
+    public static String getURLContent(String url) {
+        String content;
+        try {
+            InputStream is = new URL(url).openStream();
+            content = StreamUtil.getString(is);
+        } catch (Exception e) {
+            logger.error("获取 URL 内容出错！", e);
+            throw new RuntimeException(e);
+        }
+        return content;
     }
 }

@@ -1,6 +1,6 @@
 package com.tkhoon.framework.util;
 
-import com.tkhoon.framework.Constant;
+import com.tkhoon.framework.FrameworkConstant;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Properties;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 
@@ -164,7 +163,7 @@ public class FileUtil {
         try {
             FileUtil.createFile(filePath);
             os = new BufferedOutputStream(new FileOutputStream(filePath));
-            w = new OutputStreamWriter(os, Constant.DEFAULT_CHARSET);
+            w = new OutputStreamWriter(os, FrameworkConstant.DEFAULT_CHARSET);
             w.write(fileContent);
             w.flush();
         } catch (Exception e) {

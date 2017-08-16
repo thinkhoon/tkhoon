@@ -1,6 +1,6 @@
 package com.tkhoon.framework.helper;
 
-import com.tkhoon.framework.Constant;
+import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.annotation.Aspect;
 import com.tkhoon.framework.annotation.Order;
 import com.tkhoon.framework.aspect.PluginAspect;
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.log4j.Logger;
 
 public class AOPHelper {
@@ -67,7 +66,7 @@ public class AOPHelper {
 
     private static void addPluginAspect(Map<Class<?>, List<Class<?>>> aspectMap) throws Exception {
         // 获取插件包名下父类为 PluginAspect 的所有类（插件切面类）
-        List<Class<?>> pluginAspectClassList = ClassUtil.getClassListBySuper(Constant.PLUGIN_PACKAGE, PluginAspect.class);
+        List<Class<?>> pluginAspectClassList = ClassUtil.getClassListBySuper(FrameworkConstant.PLUGIN_PACKAGE, PluginAspect.class);
         if (CollectionUtil.isNotEmpty(pluginAspectClassList)) {
             // 遍历所有插件切面类
             for (Class<?> pluginAspectClass : pluginAspectClassList) {

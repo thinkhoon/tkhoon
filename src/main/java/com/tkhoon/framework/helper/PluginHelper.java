@@ -1,6 +1,6 @@
 package com.tkhoon.framework.helper;
 
-import com.tkhoon.framework.Constant;
+import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.Plugin;
 import com.tkhoon.framework.util.ClassUtil;
 import java.util.List;
@@ -14,7 +14,7 @@ public class PluginHelper {
     static {
         try {
             // 获取并遍历所有的 Plugin 类（实现了 Plugin 接口的类）
-            List<Class<?>> pluginClassList = ClassUtil.getClassListBySuper(Constant.PLUGIN_PACKAGE, Plugin.class);
+            List<Class<?>> pluginClassList = ClassUtil.getClassListBySuper(FrameworkConstant.PLUGIN_PACKAGE, Plugin.class);
             for (Class<?> pluginClass : pluginClassList) {
                 // 创建 Plugin 实例
                 Plugin plugin = (Plugin) pluginClass.newInstance();
