@@ -1,7 +1,9 @@
 package com.tkhoon.framework.helper;
 
+import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.StringUtil;
+
 import java.util.Properties;
 
 public class ConfigHelper {
@@ -20,7 +22,15 @@ public class ConfigHelper {
         int value = 0;
         String sValue = getStringProperty(key);
         if (StringUtil.isNumber(sValue)) {
-            value = Integer.parseInt(sValue);
+            value = CastUtil.castInt(sValue);
+        }
+        return value;
+    }
+
+    public static boolean getBooleanProperty(String key) {
+        boolean value = false;
+        if (configProperties.containsKey(key)) {
+            value = CastUtil.castBoolean(configProperties.getProperty(key));
         }
         return value;
     }

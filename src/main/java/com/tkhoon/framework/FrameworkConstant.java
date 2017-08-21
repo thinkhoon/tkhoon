@@ -22,5 +22,5 @@ public interface FrameworkConstant {
     String UPLOAD_FILE_TYPE = "file_type";
     String UPLOAD_FILE_SIZE = "file_size";
 
-    String PLUGIN_PACKAGE = "com.tkhoon.plugin";  
+    String PLUGIN_PACKAGE = "com.tkhoon.plugin";
 }

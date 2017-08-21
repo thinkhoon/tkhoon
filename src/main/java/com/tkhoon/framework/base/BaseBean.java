@@ -2,7 +2,6 @@ package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.util.JSONUtil;
 import java.io.Serializable;
-
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
