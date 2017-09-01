@@ -8,7 +8,7 @@ public interface FrameworkConstant {
     String APP_JSP_PATH = "app.jsp_path";
     String APP_WWW_PATH = "app.www_path";
 
-    String DEFAULT_SERVLET_NAME = "default";
+    String DEFAULT_SERVLET_NAME = "default";  
     String JSP_SERVLET_NAME = "jsp";
     String UPLOAD_SERVLET_NAME = "upload";
   
