@@ -20,7 +20,7 @@ public interface FrameworkConstant {
     String UPLOAD_INPUT_NAME = "file";
     String UPLOAD_FILE_NAME = "file_name";
     String UPLOAD_FILE_TYPE = "file_type";
-    String UPLOAD_FILE_SIZE = "file_size";
+    String UPLOAD_FILE_SIZE = "file_size";  
 
     String PLUGIN_PACKAGE = "com.tkhoon.plugin";
 }//
