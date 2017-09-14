@@ -12,7 +12,7 @@ public interface FrameworkConstant {
     String JSP_SERVLET_NAME = "jsp";
     String UPLOAD_SERVLET_NAME = "upload";
   
-    String FAVICON_ICO_URL = "/favicon.ico";  
+    String FAVICON_ICO_URL = "/favicon.ico";
     String UPLOAD_SERVLET_URL = "/upload.do";
 
     String UPLOAD_BASE_PATH = "upload/";
