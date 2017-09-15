@@ -1,37 +1,21 @@
 package com.tkhoon.framework.helper;
 
-import com.tkhoon.framework.util.CastUtil;
-import com.tkhoon.framework.util.FileUtil;
-import com.tkhoon.framework.util.StringUtil;
-
+import com.tkhoon.framework.util.PropsUtil;
 import java.util.Properties;
 
 public class ConfigHelper {
 
-    private static final Properties configProperties = FileUtil.loadPropFile("config.properties");
+    private static final Properties configProps = PropsUtil.loadProps("config.properties");
 
-    public static String getStringProperty(String key) {
-        String value = "";
-        if (configProperties.containsKey(key)) {
-            value = configProperties.getProperty(key);
-        }
-        return value;
+    public static String getConfigString(String key) {
+        return PropsUtil.getString(configProps, key);
     }
 
-    public static int getNumberProperty(String key) {
-        int value = 0;
-        String sValue = getStringProperty(key);
-        if (StringUtil.isNumber(sValue)) {
-            value = CastUtil.castInt(sValue);
-        }
-        return value;
+    public static int getConfigNumber(String key) {
+        return PropsUtil.getNumber(configProps, key);
     }
 
-    public static boolean getBooleanProperty(String key) {
-        boolean value = false;
-        if (configProperties.containsKey(key)) {
-            value = CastUtil.castBoolean(configProperties.getProperty(key));
-        }
-        return value;
+    public static boolean getConfigBoolean(String key) {
+        return PropsUtil.getBoolean(configProps, key);
     }
 }

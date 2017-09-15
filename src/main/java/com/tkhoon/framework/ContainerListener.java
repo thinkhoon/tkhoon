@@ -1,8 +1,10 @@
 package com.tkhoon.framework;
 
 import com.tkhoon.framework.helper.ConfigHelper;
+import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.StringUtil;
 
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -12,12 +14,12 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class ContainerListener implements ServletContextListener {
 
-    private static final String wwwPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_WWW_PATH);
-    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
+    private static final String wwwPath = ConfigHelper.getConfigString(FrameworkConstant.APP_WWW_PATH);
+    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        // 初始化 Helper 类
+        // 初始化相关 Helper 类
         Smart.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
@@ -25,6 +27,8 @@ public class ContainerListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // 销毁插件
+        destroyPlugin();
     }
 
     private void addServletMapping(ServletContext context) {
@@ -32,13 +36,11 @@ public class ContainerListener implements ServletContextListener {
         registerDefaultServlet(context);
         // 用 JspServlet 映射所有 JSP 请求
         registerJspServlet(context);
-        // 用 UploadServlet 映射 /upload.do 请求
-        registerUploadServlet(context);
     }
 
     private void registerDefaultServlet(ServletContext context) {
         ServletRegistration defaultServletReg = context.getServletRegistration(FrameworkConstant.DEFAULT_SERVLET_NAME);
-        defaultServletReg.addMapping(FrameworkConstant.FAVICON_ICO_URL);
+        defaultServletReg.addMapping("/favicon.ico");
         if (StringUtil.isNotEmpty(wwwPath)) {
             defaultServletReg.addMapping(wwwPath + "*");
         }
@@ -51,8 +53,10 @@ public class ContainerListener implements ServletContextListener {
         }
     }
 
-    private void registerUploadServlet(ServletContext context) {
-        ServletRegistration uploadServletReg = context.getServletRegistration(FrameworkConstant.UPLOAD_SERVLET_NAME);
-        uploadServletReg.addMapping(FrameworkConstant.UPLOAD_SERVLET_URL);
+    public static void destroyPlugin() {
+        List<Plugin> pluginList = PluginHelper.getPluginList();
+        for (Plugin plugin : pluginList) {
+            plugin.destroy();
+        }
     }
 }

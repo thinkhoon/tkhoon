@@ -7,11 +7,12 @@ import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.helper.EntityHelper;
 import com.tkhoon.framework.helper.IOCHelper;
 import com.tkhoon.framework.helper.PluginHelper;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Smart {
 
-    private static final Logger logger = Logger.getLogger(Smart.class);
+    private static final Logger logger = LoggerFactory.getLogger(Smart.class);
 
     public static void init() {
         try {
