@@ -1,11 +1,14 @@
-package com.tkhoon.framework.proxy;
+package com.tkhoon.framework.base;
+
+import com.tkhoon.framework.proxy.Proxy;
+import com.tkhoon.framework.proxy.ProxyChain;
 
 import java.lang.reflect.Method;
 
-public abstract class AspectProxy implements Proxy {
+public abstract class BaseAspect implements Proxy {
 
     @Override
-    public final Object doProxy(ProxyChain proxyChain) throws Throwable {
+    public final Object doProxy(ProxyChain proxyChain) throws Exception {
         Object result = null;
 
         Class<?> cls = proxyChain.getTargetClass();
@@ -23,7 +26,7 @@ public abstract class AspectProxy implements Proxy {
             }
         } catch (Exception e) {
             error(cls, method, params, e);
-            throw e;
+            throw e; // 将异常继续往上抛，抛给它的调用者
         } finally {
             end();
         }
@@ -34,17 +37,17 @@ public abstract class AspectProxy implements Proxy {
     public void begin() {
     }
 
-    public boolean intercept(Class<?> cls, Method method, Object[] params) throws Throwable {
+    public boolean intercept(Class<?> cls, Method method, Object[] params) throws Exception {
         return true;
     }
 
-    public void before(Class<?> cls, Method method, Object[] params) throws Throwable {
+    public void before(Class<?> cls, Method method, Object[] params) throws Exception {
     }
 
-    public void after(Class<?> cls, Method method, Object[] params, Object result) throws Throwable {
+    public void after(Class<?> cls, Method method, Object[] params, Object result) throws Exception {
     }
 
-    public void error(Class<?> cls, Method method, Object[] params, Throwable e) {
+    public void error(Class<?> cls, Method method, Object[] params, Exception e) {
     }
 
     public void end() {

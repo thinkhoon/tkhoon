@@ -2,21 +2,20 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Table;
 import com.tkhoon.framework.util.CollectionUtil;
+import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.MapUtil;
-import com.tkhoon.framework.util.PropsUtil;
 import com.tkhoon.framework.util.StringUtil;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 public class SQLHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(SQLHelper.class);
+    private static final Logger logger = Logger.getLogger(SQLHelper.class);
 
-    private static final Properties sqlProps = PropsUtil.loadProps("sql.properties");
+    private static final Properties sqlProps = FileUtil.loadPropFile("sql.properties");
 
     public static String getSQL(String key) {
         String value = "";
