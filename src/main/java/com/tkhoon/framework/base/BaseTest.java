@@ -6,7 +6,6 @@ import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.util.ClassUtil;
 import java.io.File;
 import java.util.List;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.junit.runner.RunWith;
