@@ -8,6 +8,7 @@ import com.tkhoon.framework.util.StringUtil;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
+
 import org.apache.log4j.Logger;
 
 public class SQLHelper {
