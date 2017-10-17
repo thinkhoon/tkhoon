@@ -1,8 +1,10 @@
 package com.tkhoon.framework;
 
 import com.tkhoon.framework.helper.ConfigHelper;
+import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.StringUtil;
 
+import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -17,7 +19,7 @@ public class ContainerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        // 初始化 Helper 类
+        // 初始化相关 Helper 类
         Smart.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
@@ -25,6 +27,8 @@ public class ContainerListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        // 销毁插件
+        destroyPlugin();
     }
 
     private void addServletMapping(ServletContext context) {
@@ -46,6 +50,13 @@ public class ContainerListener implements ServletContextListener {
         if (StringUtil.isNotEmpty(jspPath)) {
             ServletRegistration jspServletReg = context.getServletRegistration(FrameworkConstant.JSP_SERVLET_NAME);
             jspServletReg.addMapping(jspPath + "*");
+        }
+    }
+
+    public static void destroyPlugin() {
+        List<Plugin> pluginList = PluginHelper.getPluginList();
+        for (Plugin plugin : pluginList) {
+            plugin.destroy();
         }
     }
 }
