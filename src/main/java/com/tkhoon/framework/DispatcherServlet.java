@@ -1,13 +1,16 @@
 package com.tkhoon.framework;
 
-import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.Page;
-import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
+import com.tkhoon.framework.exception.AccessException;
+import com.tkhoon.framework.exception.PermissionException;
+import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.helper.UploadHelper;
+import com.tkhoon.framework.helper.bean.ActionBean;
+import com.tkhoon.framework.helper.bean.RequestBean;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
@@ -26,17 +29,18 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(urlPatterns = "/*", loadOnStartup = 0)
 public class DispatcherServlet extends HttpServlet {
 
-    private static final Logger logger = Logger.getLogger(DispatcherServlet.class);
+    private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     // 获取相关配置项
-    private static final String homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
-    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
+    private static final String homePage = ConfigHelper.getConfigString(FrameworkConstant.APP_HOME_PAGE);
+    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
+    private static final String forbiddenURL = ConfigHelper.getConfigString(FrameworkConstant.APP_FORBIDDEN_URL);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -51,11 +55,13 @@ public class DispatcherServlet extends HttpServlet {
         String currentRequestMethod = request.getMethod();
         String currentRequestPath = WebUtil.getRequestPath(request);
         if (logger.isDebugEnabled()) {
-            logger.debug("[Smart] " + currentRequestMethod + ":" + currentRequestPath);
+            logger.debug("[Smart] {}:{}", currentRequestMethod, currentRequestPath);
         }
         // 将“/”请求重定向到首页
         if (currentRequestPath.equals("/")) {
-            WebUtil.redirectRequest(homePage, request, response);
+            if (StringUtil.isNotEmpty(homePage)) {
+                WebUtil.redirectRequest(homePage, request, response);
+            }
             return;
         }
         // 去掉当前请求路径末尾的“/”
@@ -92,9 +98,10 @@ public class DispatcherServlet extends HttpServlet {
                     break;
                 }
             }
+        } catch (UploadException e) {
+            logger.error("文件上传出错！", e);
         } catch (Exception e) {
             logger.error("执行 DispatcherServlet 出错！", e);
-            throw new RuntimeException(e);
         } finally {
             // 销毁 DataContext
             DataContext.destroy();
@@ -160,6 +167,10 @@ public class DispatcherServlet extends HttpServlet {
         // 调用 Action 方法
         Object actionMethodResult;
         try {
+            Class<?>[] paramTypes = actionMethod.getParameterTypes();
+            if (paramTypes.length != actionMethodParamList.size()) {
+                throw new RuntimeException("由于参数不匹配，无法调用 Action 方法！");
+            }
             actionMethod.setAccessible(true); // 取消类型安全检测（可提高反射性能）
             actionMethodResult = actionMethod.invoke(actionInstance, actionMethodParamList.toArray());
         } catch (Exception e) {
@@ -173,8 +184,9 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleActionMethodException(HttpServletRequest request, HttpServletResponse response, Exception e) {
-        if (e.getCause() instanceof AuthException) {
-            // 若为认证异常，则分两种情况进行处理
+        Throwable cause = e.getCause();
+        if (cause instanceof AccessException) {
+            // 分两种情况进行处理
             if (WebUtil.isAJAX(request)) {
                 // 若为 AJAX 请求，则发送 FORBIDDEN(403) 错误
                 WebUtil.sendError(HttpServletResponse.SC_FORBIDDEN, response);
@@ -182,10 +194,13 @@ public class DispatcherServlet extends HttpServlet {
                 // 否则重定向到首页
                 WebUtil.redirectRequest("/", request, response);
             }
+        } else if (cause instanceof PermissionException) {
+            // 若为权限异常，则跳转到 Forbidden URL
+            WebUtil.redirectRequest(forbiddenURL, request, response);
         } else {
-            // 若为其他异常，则记录错误日志
+            // 若为其他异常，则记录错误日志，并返回错误代码
             logger.error("调用 Action 方法出错！", e);
-            throw new RuntimeException(e); // 这里需要向上抛出异常，否则无法定位到错误页面
+            WebUtil.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
         }
     }
 
@@ -196,10 +211,10 @@ public class DispatcherServlet extends HttpServlet {
                 // 若为 Result 类型，则需要分两种情况进行处理
                 Result result = (Result) actionMethodResult;
                 if (UploadHelper.isMultipart(request)) {
-                    // 转换为 HTML 格式并写入响应中（文件上传必须指定 Response 的 Content-Type 为 text/html）
+                    // 对于 multipart 类型，说明是文件上传，需要转换为 HTML 格式并写入响应中
                     WebUtil.writeHTML(response, result);
                 } else {
-                    // 转换为 JSON 格式并写入响应中
+                    // 对于其它类型，统一转换为 JSON 格式并写入响应中
                     WebUtil.writeJSON(response, result);
                 }
             } else if (actionMethodResult instanceof Page) {
