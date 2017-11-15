@@ -19,7 +19,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-        </dependency>
+        </dependency>  
         <!-- SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>
