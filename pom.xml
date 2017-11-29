@@ -34,7 +34,7 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-        </dependency>
+        </dependency>  
         <!-- CGLib -->
         <dependency>
             <groupId>cglib</groupId>
