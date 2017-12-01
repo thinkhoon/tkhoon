@@ -18,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -32,7 +33,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("application/json"); // 指定内容类型为 JSON 格式
-            response.setCharacterEncoding(FrameworkConstant.UTF_8); // 防止中文乱码
+            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -48,7 +49,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("text/html"); // 指定内容类型为 HTML 格式
-            response.setCharacterEncoding(FrameworkConstant.UTF_8); // 防止中文乱码
+            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -65,7 +66,7 @@ public class WebUtil {
         try {
             String method = request.getMethod();
             if (method.equalsIgnoreCase("put") || method.equalsIgnoreCase("delete")) {
-                String queryString = CodecUtil.urlDecode(StreamUtil.getString(request.getInputStream()));
+                String queryString = CodecUtil.decodeUTF8(StreamUtil.getString(request.getInputStream()));
                 if (StringUtil.isNotEmpty(queryString)) {
                     String[] qsArray = StringUtil.splitString(queryString, "&");
                     if (ArrayUtil.isNotEmpty(qsArray)) {
@@ -165,7 +166,7 @@ public class WebUtil {
             if (cookieArray != null) {
                 for (Cookie cookie : cookieArray) {
                     if (StringUtil.isNotEmpty(name) && name.equals(cookie.getName())) {
-                        value = CodecUtil.urlDecode(cookie.getValue());
+                        value = CodecUtil.decodeUTF8(cookie.getValue());
                         break;
                     }
                 }
@@ -181,10 +182,11 @@ public class WebUtil {
     public static void downloadFile(HttpServletResponse response, String filePath) {
         try {
             String originalFileName = FilenameUtils.getName(filePath);
-            String downloadedFileName = new String(originalFileName.getBytes("GBK"), "ISO8859_1"); // 防止中文乱码
+            String decodedFileName = FileUtil.getDecodedFileName(originalFileName);
+            String downloadedFileName = new String(decodedFileName.getBytes(), "ISO-8859-1");
 
             response.setContentType("application/octet-stream");
-            response.addHeader("Content-Disposition", "attachment;filename=\"" + downloadedFileName + "\"");
+            response.addHeader("Content-Disposition", "attachment;filename=" + downloadedFileName);
 
             InputStream inputStream = new BufferedInputStream(new FileInputStream(filePath));
             OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
@@ -198,8 +200,9 @@ public class WebUtil {
     // 设置 Redirect URL 到 Session 中
     public static void setRedirectURL(HttpServletRequest request, String sessionKey) {
         if (!isAJAX(request)) {
-            String requestPath = getRequestPath(request);
-            request.getSession().setAttribute(sessionKey, requestPath);
+            HttpSession session = request.getSession();
+            String requestPath = request.getRequestURL().toString();
+            session.setAttribute(sessionKey, requestPath);
         }
     }
 
@@ -270,11 +273,5 @@ public class WebUtil {
             throw new RuntimeException(e);
         }
         return captcha.toString();
-    }
-
-    // 是否为 IE 浏览器
-    public boolean isIE(HttpServletRequest request) {
-        String agent = request.getHeader("User-Agent");
-        return agent != null && agent.contains("MSIE");
     }
 }

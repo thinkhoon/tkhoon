@@ -1,11 +1,13 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Action;
+import com.tkhoon.framework.annotation.Aspect;
 import com.tkhoon.framework.annotation.Bean;
 import com.tkhoon.framework.annotation.Service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,8 @@ public class BeanHelper {
                 // 处理带有 @Bean/@Service/@Action/@Aspect 注解的类
                 if (cls.isAnnotationPresent(Bean.class) ||
                     cls.isAnnotationPresent(Service.class) ||
-                    cls.isAnnotationPresent(Action.class)) {
+                    cls.isAnnotationPresent(Action.class) ||
+                    cls.isAnnotationPresent(Aspect.class)) {
                     // 创建 Bean 实例
                     Object beanInstance = cls.newInstance();
                     // 将 Bean 实例放入 Bean Map 中（键为 Bean 类，值为 Bean 实例）
@@ -45,9 +48,5 @@ public class BeanHelper {
             throw new RuntimeException("无法根据类名获取实例！" + cls);
         }
         return (T) beanMap.get(cls);
-    }
-
-    public static void setBean(Class<?> cls, Object obj) {
-        beanMap.put(cls, obj);
     }
 }

@@ -1,4 +1,4 @@
-package com.tkhoon.framework.helper.bean;
+package com.tkhoon.framework.bean;
 
 public class RequestBean {
 

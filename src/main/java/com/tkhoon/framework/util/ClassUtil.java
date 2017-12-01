@@ -32,18 +32,6 @@ public class ClassUtil {
         return classpath;
     }
 
-    // 加载类
-    public static Class<?> loadClass(String className, boolean isInitialized) {
-        Class<?> cls;
-        try {
-            cls = Class.forName(className, isInitialized, getClassLoader());
-        } catch (ClassNotFoundException e) {
-            logger.error("加载类出错！", e);
-            throw new RuntimeException(e);
-        }
-        return cls;
-    }
-
     // 获取指定包名下的所有类
     public static List<Class<?>> getClassList(String packageName, boolean isRecursive) {
         List<Class<?>> classList = new ArrayList<Class<?>>();
@@ -66,7 +54,7 @@ public class ClassUtil {
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
                                 if (isRecursive || className.substring(0, className.lastIndexOf(".")).equals(packageName)) {
-                                    classList.add(loadClass(className, false));
+                                    classList.add(Class.forName(className));
                                 }
                             }
                         }
@@ -101,7 +89,7 @@ public class ClassUtil {
                             String jarEntryName = jarEntry.getName();
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = loadClass(className, false);
+                                Class<?> cls = Class.forName(className);
                                 if (cls.isAnnotationPresent(annotationClass)) {
                                     classList.add(cls);
                                 }
@@ -138,7 +126,7 @@ public class ClassUtil {
                             String jarEntryName = jarEntry.getName();
                             if (jarEntryName.endsWith(".class")) {
                                 String className = jarEntryName.substring(0, jarEntryName.lastIndexOf(".")).replaceAll("/", ".");
-                                Class<?> cls = loadClass(className, false);
+                                Class<?> cls = Class.forName(className);
                                 if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
                                     classList.add(cls);
                                 }
@@ -162,7 +150,7 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        classList.add(loadClass(className, false));
+                        classList.add(Class.forName(className));
                     } else {
                         if (isRecursive) {
                             String subPackagePath = getSubPackagePath(packagePath, fileName);
@@ -219,7 +207,7 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        Class<?> cls = loadClass(className, false);
+                        Class<?> cls = Class.forName(className);
                         if (cls.isAnnotationPresent(annotationClass)) {
                             classList.add(cls);
                         }
@@ -244,7 +232,7 @@ public class ClassUtil {
                     String fileName = file.getName();
                     if (file.isFile()) {
                         String className = getClassName(packageName, fileName);
-                        Class<?> cls = loadClass(className, false);
+                        Class<?> cls = Class.forName(className);
                         if (superClass.isAssignableFrom(cls) && !superClass.equals(cls)) {
                             classList.add(cls);
                         }

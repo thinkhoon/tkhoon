@@ -25,11 +25,11 @@ public class PluginHelper {
                 Plugin plugin = (Plugin) pluginClass.newInstance();
                 // 调用初始化方法
                 plugin.init();
-                // 将 Plugin 实例添加到 Plugin 列表中
+                // 将 Plugin 实例添加到 Plugin 列表
                 pluginList.add(plugin);
             }
         } catch (Exception e) {
-            logger.error("初始化 PluginHelper 出错！", e);
+            logger.error("初始化 BeanHelper 出错！", e);
         }
     }
 

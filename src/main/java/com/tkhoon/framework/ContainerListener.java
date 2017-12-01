@@ -13,13 +13,13 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class ContainerListener implements ServletContextListener {
 
-    private static final String wwwPath = ConfigHelper.getConfigString(FrameworkConstant.APP_WWW_PATH);
-    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
+    private static final String wwwPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_WWW_PATH);
+    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // 初始化相关 Helper 类
-        HelperLoader.init();
+        Smart.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
     }
@@ -52,7 +52,7 @@ public class ContainerListener implements ServletContextListener {
         }
     }
 
-    private void destroyPlugin() {
+    public static void destroyPlugin() {
         List<Plugin> pluginList = PluginHelper.getPluginList();
         for (Plugin plugin : pluginList) {
             plugin.destroy();

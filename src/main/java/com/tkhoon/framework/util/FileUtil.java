@@ -4,9 +4,13 @@ import com.tkhoon.framework.FrameworkConstant;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.Properties;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -15,6 +19,34 @@ import org.slf4j.LoggerFactory;
 public class FileUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(FileUtil.class);
+
+    // 加载 properties 文件
+    public static Properties loadPropsFile(String propsPath) {
+        Properties props = new Properties();
+        InputStream is = null;
+        try {
+            String suffix = ".properties";
+            if (propsPath.lastIndexOf(suffix) == -1) {
+                propsPath += suffix;
+            }
+            is = ClassUtil.getClassLoader().getResourceAsStream(propsPath);
+            if (is != null) {
+                props.load(is);
+            }
+        } catch (IOException e) {
+            logger.error("加载 properties 文件出错！propsPath：" + propsPath, e);
+            throw new RuntimeException(e);
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {
+                logger.error("释放资源出错！", e);
+            }
+        }
+        return props;
+    }
 
     // 创建目录
     public static File createDir(String dirPath) {
@@ -120,7 +152,7 @@ public class FileUtil {
         try {
             FileUtil.createFile(filePath);
             os = new BufferedOutputStream(new FileOutputStream(filePath));
-            w = new OutputStreamWriter(os, FrameworkConstant.UTF_8);
+            w = new OutputStreamWriter(os, FrameworkConstant.DEFAULT_CHARSET);
             w.write(fileContent);
             w.flush();
         } catch (Exception e) {
@@ -143,6 +175,20 @@ public class FileUtil {
     // 获取真实文件名（去掉文件路径）
     public static String getRealFileName(String fileName) {
         return FilenameUtils.getName(fileName);
+    }
+
+    // 获取编码后的文件名（将文件名进行 Base64 编码）
+    public static String getEncodedFileName(String fileName) {
+        String prefix = FilenameUtils.getBaseName(fileName);
+        String suffix = FilenameUtils.getExtension(fileName);
+        return CodecUtil.encodeBase64(prefix) + "." + suffix;
+    }
+
+    // 获取解码后的文件名（将文件名进行 Base64 解码）
+    public static String getDecodedFileName(String fileName) {
+        String prefix = FilenameUtils.getBaseName(fileName);
+        String suffix = FilenameUtils.getExtension(fileName);
+        return CodecUtil.decodeBase64(prefix) + "." + suffix;
     }
 
     // 判断文件是否存在

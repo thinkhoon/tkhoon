@@ -1,16 +1,15 @@
 package com.tkhoon.framework;
 
+import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.Page;
+import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
 import com.tkhoon.framework.exception.AccessException;
-import com.tkhoon.framework.exception.PermissionException;
 import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.helper.UploadHelper;
-import com.tkhoon.framework.helper.bean.ActionBean;
-import com.tkhoon.framework.helper.bean.RequestBean;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
@@ -38,9 +37,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     // 获取相关配置项
-    private static final String homePage = ConfigHelper.getConfigString(FrameworkConstant.APP_HOME_PAGE);
-    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
-    private static final String forbiddenURL = ConfigHelper.getConfigString(FrameworkConstant.APP_FORBIDDEN_URL);
+    private static final String homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
+    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -59,9 +57,7 @@ public class DispatcherServlet extends HttpServlet {
         }
         // 将“/”请求重定向到首页
         if (currentRequestPath.equals("/")) {
-            if (StringUtil.isNotEmpty(homePage)) {
-                WebUtil.redirectRequest(homePage, request, response);
-            }
+            WebUtil.redirectRequest(homePage, request, response);
             return;
         }
         // 去掉当前请求路径末尾的“/”
@@ -184,8 +180,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleActionMethodException(HttpServletRequest request, HttpServletResponse response, Exception e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof AccessException) {
+        if (e.getCause() instanceof AccessException) {
             // 分两种情况进行处理
             if (WebUtil.isAJAX(request)) {
                 // 若为 AJAX 请求，则发送 FORBIDDEN(403) 错误
@@ -194,13 +189,10 @@ public class DispatcherServlet extends HttpServlet {
                 // 否则重定向到首页
                 WebUtil.redirectRequest("/", request, response);
             }
-        } else if (cause instanceof PermissionException) {
-            // 若为权限异常，则跳转到 Forbidden URL
-            WebUtil.redirectRequest(forbiddenURL, request, response);
         } else {
-            // 若为其他异常，则记录错误日志，并返回错误代码
+            // 若为其他异常，则记录错误日志
             logger.error("调用 Action 方法出错！", e);
-            WebUtil.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, response);
+            throw new RuntimeException(e); // 这里需要向上抛出异常，否则无法定位到错误页面
         }
     }
 
