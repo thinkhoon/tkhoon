@@ -5,7 +5,6 @@ import com.tkhoon.framework.Plugin;
 import com.tkhoon.framework.util.ClassUtil;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +28,7 @@ public class PluginHelper {
                 pluginList.add(plugin);
             }
         } catch (Exception e) {
-            logger.error("初始化 BeanHelper 出错！", e);
+            logger.error("初始化 PluginHelper 出错！", e);
         }
     }
 

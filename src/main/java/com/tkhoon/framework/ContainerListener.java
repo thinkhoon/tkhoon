@@ -3,6 +3,7 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.StringUtil;
+
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -13,8 +14,8 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class ContainerListener implements ServletContextListener {
 
-    private static final String wwwPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_WWW_PATH);
-    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
+    private static final String wwwPath = ConfigHelper.getConfigString(FrameworkConstant.APP_WWW_PATH);
+    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {

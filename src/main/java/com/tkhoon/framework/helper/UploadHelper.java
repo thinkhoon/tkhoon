@@ -32,7 +32,7 @@ public class UploadHelper {
     private static final Logger logger = LoggerFactory.getLogger(UploadHelper.class);
 
     // 获取上传限制
-    private static final int uploadLimit = ConfigHelper.getNumberProperty(FrameworkConstant.APP_UPLOAD_LIMIT);
+    private static final int uploadLimit = ConfigHelper.getConfigNumber(FrameworkConstant.APP_UPLOAD_LIMIT);
 
     // 定义一个 FileUpload 对象（用于解析所上传的文件）
     private static ServletFileUpload fileUpload;
@@ -88,8 +88,6 @@ public class UploadHelper {
                     // 创建 Multipart 对象，并将其添加到 multipartList 中
                     Multipart multipart = new Multipart(uploadedFileName, contentType, fileSize, inputSteam);
                     multipartList.add(multipart);
-                    // 将所上传文件的文件名存入 fieldMap 中
-                    fieldMap.put(fieldName, uploadedFileName);
                 }
             }
         }
