@@ -7,22 +7,29 @@ import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.helper.EntityHelper;
 import com.tkhoon.framework.helper.IOCHelper;
 import com.tkhoon.framework.helper.PluginHelper;
-import com.tkhoon.framework.util.ClassUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Smart {
 
+    private static final Logger logger = LoggerFactory.getLogger(Smart.class);
+
     public static void init() {
-        Class<?>[] classList = {
-            DBHelper.class,
-            EntityHelper.class,
-            ActionHelper.class,
-            BeanHelper.class,
-            AOPHelper.class,
-            IOCHelper.class,
-            PluginHelper.class,
-        };
-        for (Class<?> cls : classList) {
-            ClassUtil.loadClass(cls.getName(), true);
+        try {
+            Class<?>[] classList = {
+                DBHelper.class,
+                EntityHelper.class,
+                ActionHelper.class,
+                BeanHelper.class,
+                AOPHelper.class,
+                IOCHelper.class,
+                PluginHelper.class,
+            };
+            for (Class<?> cls : classList) {
+                Class.forName(cls.getName());
+            }
+        } catch (Exception e) {
+            logger.error("加载 Helper 出错！", e);
         }
     }
 }

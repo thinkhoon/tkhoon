@@ -1,7 +1,6 @@
 package com.tkhoon.framework.base;
 
 import com.tkhoon.framework.util.JSONUtil;
-import com.tkhoon.framework.util.XMLUtil;
 import java.io.Serializable;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
@@ -28,9 +27,5 @@ public abstract class BaseBean implements Serializable {
 
     public String toJson() {
         return JSONUtil.toJSON(this);
-    }
-
-    public String toXML() {
-        return XMLUtil.toXML(this);
     }
 }
