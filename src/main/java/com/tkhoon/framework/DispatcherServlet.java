@@ -39,7 +39,7 @@ public class DispatcherServlet extends HttpServlet {
 
     // 获取相关配置项
     private static final String homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
-    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
+    private static final String jspPath =   ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
