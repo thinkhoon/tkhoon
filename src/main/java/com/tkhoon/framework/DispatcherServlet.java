@@ -38,7 +38,7 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     // 获取相关配置项
-    private static final String homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
+    private static final String  homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
     private static final String jspPath =   ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
 
     @Override
@@ -46,8 +46,9 @@ public class DispatcherServlet extends HttpServlet {
         // 初始化相关配置
         ServletContext servletContext = config.getServletContext();
         UploadHelper.init(servletContext);
-    }
 
+    }
+c
     @Override
     public void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // 获取当前请求相关数据
