@@ -1,7 +1,7 @@
 package com.tkhoon.framework.helper;
 
+import com.tkhoon.framework.annotation.Action;
 import com.tkhoon.framework.annotation.Request;
-import com.tkhoon.framework.base.BaseAction;
 import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.util.ArrayUtil;
@@ -18,7 +18,7 @@ public class ActionHelper {
 
     static {
         // 获取并遍历所有 Action 类
-        List<Class<?>> actionClassList = ClassHelper.getClassListBySuper(BaseAction.class);
+        List<Class<?>> actionClassList = ClassHelper.getClassListByAnnotation(Action.class);
         for (Class<?> actionClass : actionClassList) {
             // 获取并遍历该 Action 类中所有的方法（不包括父类中的方法）
             Method[] actionMethods = actionClass.getDeclaredMethods();

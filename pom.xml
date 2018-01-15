@@ -5,14 +5,14 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tkhoon</groupId>
-    <artifactId>tkhoon-framework</artifactId>
-    <version>2.0-SNAPSHOT</version>
-    <packaging>jar</packaging>
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <tkhoon.version>2.0-SNAPSHOT</tkhoon.version>
     </properties>
+
+    <groupId>com.tkhoon</groupId>
+    <artifactId>tkhoon-framework</artifactId>
+    <version>${tkhoon.version}</version>
 
     <dependencies>
         <!-- JUnit -->
@@ -29,12 +29,6 @@
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Log4J -->
-        <!--<dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.17</version>
-        </dependency>-->
         <!-- SLF4J -->
         <dependency>
             <groupId>org.slf4j</groupId>

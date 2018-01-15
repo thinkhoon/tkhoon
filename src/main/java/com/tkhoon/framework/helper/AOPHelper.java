@@ -3,10 +3,10 @@ package com.tkhoon.framework.helper;
 import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.annotation.Aspect;
 import com.tkhoon.framework.annotation.Order;
+import com.tkhoon.framework.annotation.Service;
 import com.tkhoon.framework.aspect.PluginAspect;
 import com.tkhoon.framework.aspect.TransactionAspect;
 import com.tkhoon.framework.base.BaseAspect;
-import com.tkhoon.framework.base.BaseService;
 import com.tkhoon.framework.proxy.Proxy;
 import com.tkhoon.framework.proxy.ProxyManager;
 import com.tkhoon.framework.util.ClassUtil;
@@ -101,7 +101,7 @@ public class AOPHelper {
 
     private static void addTransactionAspect(Map<Class<?>, List<Class<?>>> aspectMap) {
         // 使用 TransactionAspect 横切所有 Service 类
-        List<Class<?>> serviceClassList = ClassHelper.getClassListBySuper(BaseService.class);
+        List<Class<?>> serviceClassList = ClassHelper.getClassListByAnnotation(Service.class);
         aspectMap.put(TransactionAspect.class, serviceClassList);
     }
 
