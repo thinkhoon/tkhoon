@@ -1,9 +1,7 @@
 package com.tkhoon.framework.util;
 
 import com.tkhoon.framework.FrameworkConstant;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -20,6 +18,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -198,12 +197,11 @@ public class WebUtil {
         }
     }
 
-    // 设置 Redirect URL 到 Session 中
+    // 设置自动重定向 URL
     public static void setRedirectURL(HttpServletRequest request, String sessionKey) {
-        if (!isAJAX(request)) {
-            String requestPath = getRequestPath(request);
-            request.getSession().setAttribute(sessionKey, requestPath);
-        }
+        HttpSession session = request.getSession();
+        String requestPath = request.getRequestURL().toString();
+        session.setAttribute(sessionKey, requestPath);
     }
 
     // 创建验证码

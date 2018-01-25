@@ -2,8 +2,8 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.annotation.Table;
 import com.tkhoon.framework.util.CollectionUtil;
+import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.MapUtil;
-import com.tkhoon.framework.util.PropsUtil;
 import com.tkhoon.framework.util.StringUtil;
 import java.util.Collection;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class SQLHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(SQLHelper.class);
 
-    private static final Properties sqlProps = PropsUtil.loadProps("sql.properties");
+    private static final Properties sqlProps = FileUtil.loadPropsFile("sql.properties");
 
     public static String getSQL(String key) {
         String value = "";

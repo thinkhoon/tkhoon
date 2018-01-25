@@ -5,7 +5,6 @@ import com.tkhoon.framework.bean.Page;
 import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
 import com.tkhoon.framework.exception.AccessException;
-import com.tkhoon.framework.exception.PermissionException;
 import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
@@ -39,9 +38,8 @@ public class DispatcherServlet extends HttpServlet {
     private static final Logger logger = LoggerFactory.getLogger(DispatcherServlet.class);
 
     // 获取相关配置项
-    private static final String homePage = ConfigHelper.getConfigString(FrameworkConstant.APP_HOME_PAGE);
-    private static final String jspPath = ConfigHelper.getConfigString(FrameworkConstant.APP_JSP_PATH);
-    private static final String forbiddenURL = ConfigHelper.getConfigString(FrameworkConstant.APP_FORBIDDEN_URL);
+    private static final String homePage = ConfigHelper.getStringProperty(FrameworkConstant.APP_HOME_PAGE);
+    private static final String jspPath = ConfigHelper.getStringProperty(FrameworkConstant.APP_JSP_PATH);
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -183,8 +181,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private void handleActionMethodException(HttpServletRequest request, HttpServletResponse response, Exception e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof AccessException) {
+        if (e.getCause() instanceof AccessException) {
             // 分两种情况进行处理
             if (WebUtil.isAJAX(request)) {
                 // 若为 AJAX 请求，则发送 FORBIDDEN(403) 错误
@@ -193,9 +190,6 @@ public class DispatcherServlet extends HttpServlet {
                 // 否则重定向到首页
                 WebUtil.redirectRequest("/", request, response);
             }
-        } else if (cause instanceof PermissionException) {
-            // 若为权限异常，则跳转到 Forbidden URL
-            WebUtil.redirectRequest(forbiddenURL, request, response);
         } else {
             // 若为其他异常，则记录错误日志
             logger.error("调用 Action 方法出错！", e);
