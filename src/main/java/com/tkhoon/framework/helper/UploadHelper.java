@@ -3,8 +3,10 @@ package com.tkhoon.framework.helper;
 import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.bean.Multipart;
 import com.tkhoon.framework.exception.UploadException;
+import com.tkhoon.framework.util.CollectionUtil;
 import com.tkhoon.framework.util.FileUtil;
 import com.tkhoon.framework.util.StreamUtil;
+import com.tkhoon.framework.util.StringUtil;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadBase;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -30,7 +31,7 @@ public class UploadHelper {
     private static final Logger logger = LoggerFactory.getLogger(UploadHelper.class);
 
     // 获取上传限制
-    private static final int uploadLimit = ConfigHelper.getNumberProperty(FrameworkConstant.APP_UPLOAD_LIMIT);
+    private static final int uploadLimit = ConfigHelper.getConfigNumber(FrameworkConstant.APP_UPLOAD_LIMIT);
 
     // 定义一个 FileUpload 对象（用于解析所上传的文件）
     private static ServletFileUpload fileUpload;
@@ -78,23 +79,21 @@ public class UploadHelper {
             } else {
                 // 处理文件字段
                 String originalFileName = FileUtil.getRealFileName(fileItem.getName());
-                String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
-                String contentType = fileItem.getContentType();
-                long fileSize = fileItem.getSize();
-                InputStream inputSteam = fileItem.getInputStream();
-                // 创建 Multipart 对象，并将其添加到 multipartList 中
-                Multipart multipart = new Multipart(uploadedFileName, contentType, fileSize, inputSteam);
-                multipartList.add(multipart);
-                // 将所上传文件的文件名存入 fieldMap 中
-                fieldMap.put(fieldName, uploadedFileName);
+                if (StringUtil.isNotEmpty(originalFileName)) {
+                    String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
+                    String contentType = fileItem.getContentType();
+                    long fileSize = fileItem.getSize();
+                    InputStream inputSteam = fileItem.getInputStream();
+                    // 创建 Multipart 对象，并将其添加到 multipartList 中
+                    Multipart multipart = new Multipart(uploadedFileName, contentType, fileSize, inputSteam);
+                    multipartList.add(multipart);
+                }
             }
         }
         // 初始化参数列表
         paramList.add(fieldMap);
-        if (multipartList.size() > 1) {
+        if (CollectionUtil.isNotEmpty(multipartList)) {
             paramList.add(multipartList);
-        } else if (multipartList.size() == 1) {
-            paramList.add(multipartList.get(0));
         } else {
             paramList.add(null);
         }
@@ -104,13 +103,15 @@ public class UploadHelper {
 
     public static void uploadFile(String basePath, Multipart multipart) {
         try {
-            // 创建文件路径（绝对路径）
-            String filePath = basePath + multipart.getFileName();
-            FileUtil.createFile(filePath);
-            // 执行流复制操作
-            InputStream inputStream = new BufferedInputStream(multipart.getInputStream());
-            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
-            StreamUtil.copyStream(inputStream, outputStream);
+            if (multipart != null) {
+                // 创建文件路径（绝对路径）
+                String filePath = basePath + multipart.getFileName();
+                FileUtil.createFile(filePath);
+                // 执行流复制操作
+                InputStream inputStream = new BufferedInputStream(multipart.getInputStream());
+                OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(filePath));
+                StreamUtil.copyStream(inputStream, outputStream);
+            }
         } catch (Exception e) {
             logger.error("上传文件出错！", e);
             throw new RuntimeException(e);
