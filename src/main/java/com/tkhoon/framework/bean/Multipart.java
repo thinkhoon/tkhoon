@@ -8,7 +8,7 @@ public class Multipart extends BaseBean {
 
     private String fileName;
     private long fileSize;
-    private String contentType;
+    private String contentType;  
     private InputStream inputStream;
 
     public Multipart(String fileName, String contentType, long fileSize, InputStream inputStream) {
