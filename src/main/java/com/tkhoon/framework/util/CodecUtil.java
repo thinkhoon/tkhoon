@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.UUID;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -44,7 +43,7 @@ public class CodecUtil {
     public static String encodeBase64(String str) {
         String target;
         try {
-            target = Base64.encodeBase64String(str.getBytes(FrameworkConstant.DEFAULT_CHARSET));
+            target = Base64.encodeBase64URLSafeString(str.getBytes(FrameworkConstant.DEFAULT_CHARSET));
         } catch (UnsupportedEncodingException e) {
             logger.error("编码出错！", e);
             throw new RuntimeException(e);
