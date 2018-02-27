@@ -7,7 +7,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tkhoon.version>1.0</tkhoon.version>
+        <tkhoon.version>2.0</tkhoon.version>
     </properties>
 
     <groupId>com.tkhoon</groupId>

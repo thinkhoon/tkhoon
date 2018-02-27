@@ -11,7 +11,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -21,7 +20,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,7 +76,7 @@ public class WebUtil {
                                 String paramName = array[0];
                                 String paramValue = array[1];
                                 if (checkParamName(paramName)) {
-                                    paramMap.put(paramName, encodeParamValue(paramValue));
+                                    paramMap.put(paramName, paramValue);
                                 }
                             }
                         }
@@ -92,7 +90,7 @@ public class WebUtil {
                         String[] paramValues = request.getParameterValues(paramName);
                         if (ArrayUtil.isNotEmpty(paramValues)) {
                             if (paramValues.length == 1) {
-                                paramMap.put(paramName, encodeParamValue(paramValues[0]));
+                                paramMap.put(paramName, paramValues[0]);
                             } else {
                                 StringBuilder paramValue = new StringBuilder("");
                                 for (int i = 0; i < paramValues.length; i++) {
@@ -101,7 +99,7 @@ public class WebUtil {
                                         paramValue.append(StringUtil.SEPARATOR);
                                     }
                                 }
-                                paramMap.put(paramName, encodeParamValue(paramValue.toString()));
+                                paramMap.put(paramName, paramValue.toString());
                             }
                         }
                     }
@@ -116,10 +114,6 @@ public class WebUtil {
 
     private static boolean checkParamName(String paramName) {
         return !paramName.equals("_"); // 忽略 jQuery 缓存参数
-    }
-
-    private static String encodeParamValue(String paramValue) throws UnsupportedEncodingException {
-        return new String(paramValue.getBytes(FrameworkConstant.CHARSET_ISO), FrameworkConstant.CHARSET_UTF);
     }
 
     // 转发请求

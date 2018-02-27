@@ -3,7 +3,6 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -20,7 +19,7 @@ public class ContainerListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // 初始化相关 Helper 类
-        Smart.init();
+        HelperLoader.init();
         // 添加 Servlet 映射
         addServletMapping(sce.getServletContext());
     }

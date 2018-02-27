@@ -1,7 +1,7 @@
 package com.tkhoon.framework.base;
 
+import com.tkhoon.framework.HelperLoader;
 import com.tkhoon.framework.OrderedRunner;
-import com.tkhoon.framework.Smart;
 import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.util.ClassUtil;
 import java.io.File;
@@ -18,7 +18,7 @@ public abstract class BaseTest {
     private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
 
     static {
-        Smart.init();
+        HelperLoader.init();
     }
 
     protected static void initSQL(String sqlPath) {
