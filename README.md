@@ -3,9 +3,9 @@ tkhoon Framework
 
 
 tkhoon是我自己在github上发布的一个自己做的轻量级WEB框架。
-项目地址是：https://github.com/thinkhoon/tkhoon。
+项目地址是： https://github.com/thinkhoon/tkhoon。
 tkhoon框架具有如下功能： <br />
-1 一个轻量级的IOC框架； <br />
+1 一个轻量级的IOC框架； <br/>
 2 一个轻量级的AOP框架； <br />
 3 一个轻量级的ORM框架； <br />
 4 提供了一个轻量级的基于Servlet3.0的可扩展的MVC框架。 <br />
