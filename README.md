@@ -1,6 +1,3 @@
-tkhoon Framework
-
-
 
 tkhoon是我自己在github上发布的一个自己做的轻量级WEB框架。
 项目地址是： https://github.com/thinkhoon/tkhoon。
