@@ -25,14 +25,14 @@ public class TransactionProxy implements Proxy {
                 // 开启事务
                 DBHelper.beginTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[Smart] begin transaction");
+                    logger.debug("[tkhoon] begin transaction");
                 }
                 // 执行操作
                 result = proxyChain.doProxyChain();
                 // 提交事务
                 DBHelper.commitTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[Smart] commit transaction");
+                    logger.debug("[tkhoon] commit transaction");
                 }
             } else {
                 // 执行操作
@@ -44,7 +44,7 @@ public class TransactionProxy implements Proxy {
                 // 回滚事务
                 DBHelper.rollbackTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[Smart] rollback transaction");
+                    logger.debug("[tkhoon] rollback transaction");
                 }
             }
             logger.error("服务端运行出错！", e);

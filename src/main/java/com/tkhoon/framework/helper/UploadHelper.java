@@ -2,6 +2,7 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.bean.Multipart;
+import com.tkhoon.framework.bean.Multiparts;
 import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.util.CollectionUtil;
 import com.tkhoon.framework.util.FileUtil;
@@ -46,7 +47,7 @@ public class UploadHelper {
         if (uploadLimit != 0) {
             fileUpload.setFileSizeMax(uploadLimit * 1024 * 1024); // 单位为 M
             if (logger.isDebugEnabled()) {
-                logger.debug("[Smart] limit of uploading: {}M", uploadLimit);
+                logger.debug("[tkhoon] limit of uploading: {}M", uploadLimit);
             }
         }
     }
@@ -93,11 +94,7 @@ public class UploadHelper {
         // 初始化参数列表
         paramList.add(fieldMap);
         if (CollectionUtil.isNotEmpty(multipartList)) {
-            if (multipartList.size() == 1) {
-                paramList.add(multipartList.get(0));
-            } else {
-                paramList.add(multipartList);
-            }
+            paramList.add(new Multiparts(multipartList));
         } else {
             paramList.add(null);
         }
@@ -119,6 +116,12 @@ public class UploadHelper {
         } catch (Exception e) {
             logger.error("上传文件出错！", e);
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void uploadFiles(String basePath, Multiparts multiparts) {
+        for (Multipart multipart : multiparts.getAll()) {
+            uploadFile(basePath, multipart);
         }
     }
 }

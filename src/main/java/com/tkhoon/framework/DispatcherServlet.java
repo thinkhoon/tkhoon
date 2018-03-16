@@ -56,7 +56,7 @@ public class DispatcherServlet extends HttpServlet {
         String currentRequestMethod = request.getMethod();
         String currentRequestPath = WebUtil.getRequestPath(request);
         if (logger.isDebugEnabled()) {
-            logger.debug("[Smar t] {}:{}", currentRequestMethod, currentRequestPath);
+            logger.debug("[tkhoon] {}:{}", currentRequestMethod, currentRequestPath);
         }
         // 将“/”请求重定向到首页
         if (StringUtil.isNotEmpty(homePage) && currentRequestPath.equals("/")) {
