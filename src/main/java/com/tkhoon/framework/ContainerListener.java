@@ -1,9 +1,9 @@
 package com.tkhoon.framework;
 
 import com.tkhoon.framework.helper.ConfigHelper;
+import com.tkhoon.framework.helper.ModuleHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.StringUtil;
-
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -19,10 +19,13 @@ public class ContainerListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
+        ServletContext context = sce.getServletContext();
         // 初始化相关 Helper 类
         HelperLoader.init();
         // 添加 Servlet 映射
-        addServletMapping(sce.getServletContext());
+        addServletMapping(context);
+        // 安装模块
+        installModule(context);
     }
 
     @Override
@@ -53,7 +56,14 @@ public class ContainerListener implements ServletContextListener {
         }
     }
 
-    public static void destroyPlugin() {
+    private void installModule(ServletContext context) {
+        List<Module> moduleList = ModuleHelper.getModuleList();
+        for (Module module : moduleList) {
+            module.install(context);
+        }
+    }
+
+    private void destroyPlugin() {
         List<Plugin> pluginList = PluginHelper.getPluginList();
         for (Plugin plugin : pluginList) {
             plugin.destroy();

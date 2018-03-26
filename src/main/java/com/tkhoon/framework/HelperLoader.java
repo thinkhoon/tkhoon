@@ -6,6 +6,7 @@ import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.DBHelper;
 import com.tkhoon.framework.helper.EntityHelper;
 import com.tkhoon.framework.helper.IOCHelper;
+import com.tkhoon.framework.helper.ModuleHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.ClassUtil;
 
@@ -20,6 +21,7 @@ public final class HelperLoader {
             AOPHelper.class,
             IOCHelper.class,
             PluginHelper.class,
+            ModuleHelper.class,
         };
         for (Class<?> cls : classList) {
             ClassUtil.loadClass(cls.getName(), true);
