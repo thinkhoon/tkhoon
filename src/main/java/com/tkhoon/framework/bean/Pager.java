@@ -1,6 +1,7 @@
 package com.tkhoon.framework.bean;
 
 import com.tkhoon.framework.base.BaseBean;
+
 import java.util.List;
 
 public class Pager<T> extends BaseBean {
