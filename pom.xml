@@ -11,7 +11,7 @@
     </properties>
 
     <groupId>com.tkhoon</groupId>
-    <artifactId>tkhoon-framework</artifactId>
+    <artifactId>tkhoon-framework </artifactId>
     <version>${tkhoon.version}</version>
 
     <dependencies>
