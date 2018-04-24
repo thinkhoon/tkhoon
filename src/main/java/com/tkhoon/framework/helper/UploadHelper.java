@@ -91,7 +91,7 @@ public class UploadHelper {
                 }
             }
         }
-        // 初始化参数列表
+        // 初始化参数列表  
         paramList.add(fieldMap);
         if (CollectionUtil.isNotEmpty(multipartList)) {
             paramList.add(new Multiparts(multipartList));
