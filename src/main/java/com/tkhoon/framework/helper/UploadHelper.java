@@ -47,7 +47,7 @@ public class UploadHelper {
         if (uploadLimit != 0) {
             fileUpload.setFileSizeMax(uploadLimit * 1024 * 1024); // 单位为 M
             if (logger.isDebugEnabled()) {
-                logger.debug("[tkhoon] limit of uploading: {}M", uploadLimit);
+                logger.debug("[Smart] limit of uploading: {}M", uploadLimit);
             }
         }
     }
@@ -91,7 +91,7 @@ public class UploadHelper {
                 }
             }
         }
-        // 初始化参数列表  
+        // 初始化参数列表
         paramList.add(fieldMap);
         if (CollectionUtil.isNotEmpty(multipartList)) {
             paramList.add(new Multiparts(multipartList));

@@ -3,7 +3,6 @@ package com.tkhoon.framework.proxy;
 import com.tkhoon.framework.annotation.Transaction;
 import com.tkhoon.framework.helper.DBHelper;
 import java.lang.reflect.Method;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,14 +24,14 @@ public class TransactionProxy implements Proxy {
                 // 开启事务
                 DBHelper.beginTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[tkhoon] begin transaction");
+                    logger.debug("[Smart] begin transaction");
                 }
                 // 执行操作
                 result = proxyChain.doProxyChain();
                 // 提交事务
                 DBHelper.commitTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[tkhoon] commit transaction");
+                    logger.debug("[Smart] commit transaction");
                 }
             } else {
                 // 执行操作
@@ -44,7 +43,7 @@ public class TransactionProxy implements Proxy {
                 // 回滚事务
                 DBHelper.rollbackTransaction();
                 if (logger.isDebugEnabled()) {
-                    logger.debug("[tkhoon] rollback transaction");
+                    logger.debug("[Smart] rollback transaction");
                 }
             }
             logger.error("服务端运行出错！", e);
