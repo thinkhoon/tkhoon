@@ -22,7 +22,7 @@ public class DataContext {
     public static void init(HttpServletRequest request, HttpServletResponse response) {
         DataContext dataContext = new DataContext();
         dataContext.request = request;
-        dataContext.response = response;
+        dataContext.response = response;  
         dataContextContainer.set(dataContext);
     }
 
