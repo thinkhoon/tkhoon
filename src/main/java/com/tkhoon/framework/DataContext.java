@@ -28,7 +28,7 @@ public class DataContext {
 
     // 销毁
     public static void destroy() {
-        dataContextContainer.remove(); 
+        dataContextContainer.remove();
     }
 
     // 获取 DataContext
