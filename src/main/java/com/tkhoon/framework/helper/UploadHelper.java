@@ -83,7 +83,7 @@ public class UploadHelper {
                 String originalFileName = FileUtil.getRealFileName(fileItem.getName());
                 String fileName = FileUtil.getRealFileName(fileItem.getName());
                                  if (StringUtil.isNotEmpty(originalFileName)) {
-                                        String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
+                                          String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
                                          String contentType = fileItem.getContentType();
                                          long fileSize = fileItem.getSize();
                                          InputStream inputSteam = fileItem.getInputStream();
