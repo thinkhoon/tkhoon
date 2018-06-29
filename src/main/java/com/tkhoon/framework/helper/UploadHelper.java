@@ -82,7 +82,7 @@ public class UploadHelper {
                 // 处理文件字段
                 String originalFileName = FileUtil.getRealFileName(fileItem.getName());
                 String fileName = FileUtil.getRealFileName(fileItem.getName());
-                                 if (StringUtil.isNotEmpty(originalFileName)) {
+                                 if ( StringUtil.isNotEmpty(originalFileName)) {
                                           String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
                                          String contentType = fileItem.getContentType();
                                          long fileSize = fileItem.getSize();
