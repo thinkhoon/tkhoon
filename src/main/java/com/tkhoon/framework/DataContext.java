@@ -19,7 +19,7 @@ public class DataContext {
     private HttpServletResponse response;
 
     // 初始化
-        public static void init(HttpServletRequest request, HttpServletResponse response) {
+    public static void init(HttpServletRequest request, HttpServletResponse response) {
         DataContext dataContext = new DataContext();
         dataContext.request = request;
         dataContext.response = response;

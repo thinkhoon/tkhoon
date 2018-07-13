@@ -1,7 +1,6 @@
 package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.util.PropsUtil;
-
 import java.util.Properties;
 
 public class ConfigHelper {
