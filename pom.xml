@@ -12,7 +12,7 @@
 
     <groupId>com.tkhoon</groupId>
     <artifactId>tkhoon-framework</artifactId>
-    <version>${tkhoon.version}</version>
+    <version> ${tkhoon.version}</version>
 
     <dependencies>
         <!-- JUnit -->
