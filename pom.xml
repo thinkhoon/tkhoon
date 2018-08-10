@@ -7,12 +7,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <tkhoon.version>2.0</tkhoon.version>
+        <tkhoon.version>1.0</tkhoon.version>
     </properties>
 
     <groupId>com.tkhoon</groupId>
     <artifactId>tkhoon-framework</artifactId>
-    <version> ${tkhoon.version}</version>
+    <version>${tkhoon.version}</version>
 
     <dependencies>
         <!-- JUnit -->
@@ -46,6 +46,12 @@
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
+        </dependency>
+        <!-- Velocity -->
+        <dependency>
+            <groupId>org.apache.velocity</groupId>
+            <artifactId>velocity</artifactId>
+            <version>1.7</version>
         </dependency>
         <!-- Apache Commons -->
         <dependency>

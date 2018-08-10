@@ -2,7 +2,6 @@ package com.tkhoon.framework.helper;
 
 import com.tkhoon.framework.FrameworkConstant;
 import com.tkhoon.framework.bean.Multipart;
-import com.tkhoon.framework.bean.Multiparts;
 import com.tkhoon.framework.exception.UploadException;
 import com.tkhoon.framework.util.CollectionUtil;
 import com.tkhoon.framework.util.FileUtil;
@@ -76,17 +75,18 @@ public class UploadHelper {
             String fieldName = fileItem.getFieldName();
             if (fileItem.isFormField()) {
                 // 处理普通字段
-                String fieldValue = fileItem.getString(FrameworkConstant.CHARSET_UTF);
+                String fieldValue = fileItem.getString(FrameworkConstant.DEFAULT_CHARSET);
                 fieldMap.put(fieldName, fieldValue);
             } else {
                 // 处理文件字段
-                String fileName = FileUtil.getRealFileName(fileItem.getName());
-                if (StringUtil.isNotEmpty(fileName)) {
+                String originalFileName = FileUtil.getRealFileName(fileItem.getName());
+                if (StringUtil.isNotEmpty(originalFileName)) {
+                    String uploadedFileName = FileUtil.getEncodedFileName(originalFileName);
                     String contentType = fileItem.getContentType();
                     long fileSize = fileItem.getSize();
                     InputStream inputSteam = fileItem.getInputStream();
                     // 创建 Multipart 对象，并将其添加到 multipartList 中
-                    Multipart multipart = new Multipart(fileName, contentType, fileSize, inputSteam);
+                    Multipart multipart = new Multipart(uploadedFileName, contentType, fileSize, inputSteam);
                     multipartList.add(multipart);
                 }
             }
@@ -94,7 +94,7 @@ public class UploadHelper {
         // 初始化参数列表
         paramList.add(fieldMap);
         if (CollectionUtil.isNotEmpty(multipartList)) {
-            paramList.add(new Multiparts(multipartList));
+            paramList.add(multipartList);
         } else {
             paramList.add(null);
         }
@@ -116,12 +116,6 @@ public class UploadHelper {
         } catch (Exception e) {
             logger.error("上传文件出错！", e);
             throw new RuntimeException(e);
-        }
-    }
-
-    public static void uploadFiles(String basePath, Multiparts multiparts) {
-        for (Multipart multipart : multiparts.getAll()) {
-            uploadFile(basePath, multipart);
         }
     }
 }

@@ -3,7 +3,6 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.CodecUtil;
-
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,7 @@ public class DataContext {
         dataContextContainer.remove();
     }
 
-    //  获取 DataContext
+    // 获取 DataContext
     public static DataContext getInstance() {
         return dataContextContainer.get();
     }
@@ -152,7 +151,7 @@ public class DataContext {
 
         // 将数据放入 Cookie 中
         public static void put(String key, Object value) {
-            String strValue = CodecUtil.urlEncode(CastUtil.castString(value));
+            String strValue = CodecUtil.encodeUTF8(CastUtil.castString(value));
             javax.servlet.http.Cookie cookie = new javax.servlet.http.Cookie(key, strValue);
             getResponse().addCookie(cookie);
         }
@@ -165,7 +164,7 @@ public class DataContext {
             if (ArrayUtil.isNotEmpty(cookieArray)) {
                 for (javax.servlet.http.Cookie cookie : cookieArray) {
                     if (key.equals(cookie.getName())) {
-                        value = (T) CodecUtil.urlDecode(cookie.getValue());
+                        value = (T) CodecUtil.decodeUTF8(cookie.getValue());
                         break;
                     }
                 }

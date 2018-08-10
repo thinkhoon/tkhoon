@@ -9,7 +9,7 @@ import com.tkhoon.framework.helper.IOCHelper;
 import com.tkhoon.framework.helper.PluginHelper;
 import com.tkhoon.framework.util.ClassUtil;
 
-public final class HelperLoader {
+public final class Smart {
 
     public static void init() {
         Class<?>[] classList = {

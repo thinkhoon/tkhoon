@@ -1,6 +1,8 @@
 package com.tkhoon.framework;
 
+import com.tkhoon.framework.bean.ActionBean;
 import com.tkhoon.framework.bean.Page;
+import com.tkhoon.framework.bean.RequestBean;
 import com.tkhoon.framework.bean.Result;
 import com.tkhoon.framework.exception.AccessException;
 import com.tkhoon.framework.exception.PermissionException;
@@ -9,8 +11,6 @@ import com.tkhoon.framework.helper.ActionHelper;
 import com.tkhoon.framework.helper.BeanHelper;
 import com.tkhoon.framework.helper.ConfigHelper;
 import com.tkhoon.framework.helper.UploadHelper;
-import com.tkhoon.framework.helper.bean.ActionBean;
-import com.tkhoon.framework.helper.bean.RequestBean;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.MapUtil;
 import com.tkhoon.framework.util.StringUtil;
@@ -60,9 +60,7 @@ public class DispatcherServlet extends HttpServlet {
         }
         // 将“/”请求重定向到首页
         if (currentRequestPath.equals("/")) {
-            if (StringUtil.isNotEmpty(homePage)) {
-                WebUtil.redirectRequest(homePage, request, response);
-            }
+            WebUtil.redirectRequest(homePage, request, response);
             return;
         }
         // 去掉当前请求路径末尾的“/”

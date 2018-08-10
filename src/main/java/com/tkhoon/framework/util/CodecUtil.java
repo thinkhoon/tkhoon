@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.UUID;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -16,11 +15,11 @@ public class CodecUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(CodecUtil.class);
 
-    // 将 URL 编码
-    public static String urlEncode(String str) {
+    // 将字符串 UTF-8 编码
+    public static String encodeUTF8(String str) {
         String target;
         try {
-            target = URLEncoder.encode(str, FrameworkConstant.CHARSET_UTF);
+            target = URLEncoder.encode(str, FrameworkConstant.DEFAULT_CHARSET);
         } catch (Exception e) {
             logger.error("编码出错！", e);
             throw new RuntimeException(e);
@@ -28,11 +27,11 @@ public class CodecUtil {
         return target;
     }
 
-    // 将 URL 解码
-    public static String urlDecode(String str) {
+    // 将字符串 UTF-8 解码
+    public static String decodeUTF8(String str) {
         String target;
         try {
-            target = URLDecoder.decode(str, FrameworkConstant.CHARSET_UTF);
+            target = URLDecoder.decode(str, FrameworkConstant.DEFAULT_CHARSET);
         } catch (Exception e) {
             logger.error("解码出错！", e);
             throw new RuntimeException(e);
@@ -44,7 +43,7 @@ public class CodecUtil {
     public static String encodeBase64(String str) {
         String target;
         try {
-            target = Base64.encodeBase64URLSafeString(str.getBytes(FrameworkConstant.CHARSET_UTF));
+            target = Base64.encodeBase64String(str.getBytes(FrameworkConstant.DEFAULT_CHARSET));
         } catch (UnsupportedEncodingException e) {
             logger.error("编码出错！", e);
             throw new RuntimeException(e);
@@ -56,7 +55,7 @@ public class CodecUtil {
     public static String decodeBase64(String str) {
         String target;
         try {
-            target = new String(Base64.decodeBase64(str), FrameworkConstant.CHARSET_UTF);
+            target = new String(Base64.decodeBase64(str), FrameworkConstant.DEFAULT_CHARSET);
         } catch (UnsupportedEncodingException e) {
             logger.error("解码出错！", e);
             throw new RuntimeException(e);
