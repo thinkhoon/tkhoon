@@ -13,7 +13,7 @@ public class DataSet {
 
     // 查询单条数据，并转为相应类型的对象
     public static <T> T select(Class<T> cls, String condition, Object... params) {
-        String sql = SQLHelper.generateSelectSQL(cls, condition, "");
+        String sql = SQLHelper.generateSelectSQL(cls, condition , "");
         return DBHelper.queryBean(cls, sql, params);
     }
 
