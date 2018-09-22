@@ -3,12 +3,11 @@ package com.tkhoon.framework.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 public class ObjectUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(ObjectUtil.class);
+    private static final Logger logger = Logger.getLogger(ObjectUtil.class);
 
     // 设置成员变量
     public static void setField(Object obj, String fieldName, Object fieldValue) {
@@ -57,7 +56,7 @@ public class ObjectUtil {
     public static <T> T newInstance(String className) {
         T instance;
         try {
-            Class<?> commandClass = ClassUtil.loadClass(className, true);
+            Class<?> commandClass = Class.forName(className);
             instance = (T) commandClass.newInstance();
         } catch (Exception e) {
             logger.error("创建实例出错！", e);

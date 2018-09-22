@@ -1,40 +1,43 @@
 package com.tkhoon.framework.util;
 
-import com.tkhoon.framework.FrameworkConstant;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import com.tkhoon.framework.Constant;
 import java.io.PrintWriter;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Random;
-import javax.imageio.ImageIO;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.servlet.http.Part;
+import org.apache.log4j.Logger;
 
 public class WebUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(WebUtil.class);
+    private static final Logger logger = Logger.getLogger(WebUtil.class);
+
+    // 将数据以纯文本格式写入响应中
+    public static void writeText(HttpServletResponse response, Object data) {
+        try {
+            // 设置响应头
+            response.setContentType("text/plain"); // 指定内容类型为纯文本格式
+            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
+
+            // 向响应中写入数据
+            PrintWriter writer = response.getWriter();
+            writer.write(data + ""); // 转为字符串
+        } catch (Exception e) {
+            logger.error("在响应中写数据出错！", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     // 将数据以 JSON 格式写入响应中
     public static void writeJSON(HttpServletResponse response, Object data) {
         try {
             // 设置响应头
             response.setContentType("application/json"); // 指定内容类型为 JSON 格式
-            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
+            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -50,7 +53,7 @@ public class WebUtil {
         try {
             // 设置响应头
             response.setContentType("text/html"); // 指定内容类型为 HTML 格式
-            response.setCharacterEncoding(FrameworkConstant.DEFAULT_CHARSET); // 防止中文乱码
+            response.setCharacterEncoding(Constant.DEFAULT_CHARSET); // 防止中文乱码
 
             // 向响应中写入数据
             PrintWriter writer = response.getWriter();
@@ -61,13 +64,36 @@ public class WebUtil {
         }
     }
 
+    // 获取上传文件路径
+    public static String getUploadFilePath(HttpServletRequest request, String relativePath) {
+        // 返回绝对路径
+        return request.getServletContext().getRealPath("") + relativePath;
+    }
+
+    // 获取上传文件名
+    public static String getUploadFileName(HttpServletRequest request, Part part) {
+        // 防止中文乱码（可放在 EncodingFilter 中处理）
+//        request.setCharacterEncoding(Constant.DEFAULT_CHARSET);
+
+        // 从请求头中获取文件名
+        String cd = part.getHeader("Content-Disposition");
+        String fileName = cd.substring(cd.lastIndexOf("=") + 2, cd.length() - 1);
+
+        // 解决 IE 浏览器文件名问题
+        if (fileName.contains("\\")) {
+            fileName = fileName.substring(fileName.lastIndexOf("\\") + 1);
+        }
+
+        return fileName;
+    }
+
     // 从请求中获取所有参数（当参数名重复时，用后者覆盖前者）
     public static Map<String, String> getRequestParamMap(HttpServletRequest request) {
         Map<String, String> paramMap = new LinkedHashMap<String, String>();
         try {
             String method = request.getMethod();
             if (method.equalsIgnoreCase("put") || method.equalsIgnoreCase("delete")) {
-                String queryString = CodecUtil.decodeUTF8(StreamUtil.getString(request.getInputStream()));
+                String queryString = CodecUtil.decodeUTF8(StreamUtil.toString(request.getInputStream()));
                 if (StringUtil.isNotEmpty(queryString)) {
                     String[] qsArray = StringUtil.splitString(queryString, "&");
                     if (ArrayUtil.isNotEmpty(qsArray)) {
@@ -117,6 +143,23 @@ public class WebUtil {
         return !paramName.equals("_"); // 忽略 jQuery 缓存参数
     }
 
+    // 创建查询映射（查询字符串格式：a:1;b:2）
+    public static Map<String, String> createQueryMap(String queryString) {
+        Map<String, String> queryMap = new HashMap<String, String>();
+        if (StringUtil.isNotEmpty(queryString)) {
+            String[] queryArray = queryString.split(";");
+            if (ArrayUtil.isNotEmpty(queryArray)) {
+                for (String query : queryArray) {
+                    String[] fieldArray = query.split(":");
+                    if (ArrayUtil.isNotEmpty(fieldArray) && fieldArray.length == 2) {
+                        queryMap.put(fieldArray[0], fieldArray[1]);
+                    }
+                }
+            }
+        }
+        return queryMap;
+    }
+
     // 转发请求
     public static void forwardRequest(String path, HttpServletRequest request, HttpServletResponse response) {
         try {
@@ -159,6 +202,22 @@ public class WebUtil {
         return servletPath + pathInfo;
     }
 
+    // 将数据放入 Cookie 中
+    public static void addCookie(HttpServletResponse response, String name, String value, String domain, int expires) {
+        try {
+            if (StringUtil.isNotEmpty(name)) {
+                value = CodecUtil.encodeUTF8(value);
+                Cookie cookie = new Cookie(name, value);
+                cookie.setDomain(domain);
+                cookie.setMaxAge(expires);
+                response.addCookie(cookie);
+            }
+        } catch (Exception e) {
+            logger.error("添加 Cookie 出错！", e);
+            throw new RuntimeException(e);
+        }
+    }
+
     // 从 Cookie 中获取数据
     public static String getCookie(HttpServletRequest request, String name) {
         String value = "";
@@ -177,101 +236,5 @@ public class WebUtil {
             throw new RuntimeException(e);
         }
         return value;
-    }
-
-    // 下载文件
-    public static void downloadFile(HttpServletResponse response, String filePath) {
-        try {
-            String originalFileName = FilenameUtils.getName(filePath);
-            String decodedFileName = FileUtil.getDecodedFileName(originalFileName);
-            String downloadedFileName = new String(decodedFileName.getBytes(), "ISO-8859-1");
-
-            response.setContentType("application/octet-stream");
-            response.addHeader("Content-Disposition", "attachment;filename=" + downloadedFileName);
-
-            InputStream inputStream = new BufferedInputStream(new FileInputStream(filePath));
-            OutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
-            StreamUtil.copyStream(inputStream, outputStream);
-        } catch (Exception e) {
-            logger.error("下载文件出错！", e);
-            throw new RuntimeException(e);
-        }
-    }
-
-    // 设置 Redirect URL 到 Session 中
-    public static void setRedirectURL(HttpServletRequest request, String sessionKey) {
-        if (!isAJAX(request)) {
-            String requestPath = getRequestPath(request);
-            request.getSession().setAttribute(sessionKey, requestPath);
-        }
-    }
-
-    // 创建验证码
-    public static String createCaptcha(HttpServletResponse response) {
-        StringBuilder captcha = new StringBuilder();
-        try {
-            // 参数初始化
-            int width = 60;                      // 验证码图片的宽度
-            int height = 25;                     // 验证码图片的高度
-            int codeCount = 4;                   // 验证码字符个数
-            int codeX = width / (codeCount + 1); // 字符横向间距
-            int codeY = height - 4;              // 字符纵向间距
-            int fontHeight = height - 2;         // 字体高度
-            int randomSeed = 10;                 // 随机数种子
-            char[] codeSequence = {              // 验证码中可出现的字符
-                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
-            };
-            // 创建图像
-            BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            Graphics2D g = bi.createGraphics();
-            // 将图像填充为白色
-            g.setColor(Color.WHITE);
-            g.fillRect(0, 0, width, height);
-            // 设置字体
-            g.setFont(new Font("Courier New", Font.BOLD, fontHeight));
-            // 绘制边框
-            g.setColor(Color.BLACK);
-            g.drawRect(0, 0, width - 1, height - 1);
-            // 产生随机干扰线（160条）
-            g.setColor(Color.WHITE);
-            // 创建随机数生成器
-            Random random = new Random();
-            for (int i = 0; i < 160; i++) {
-                int x = random.nextInt(width);
-                int y = random.nextInt(height);
-                int xl = random.nextInt(12);
-                int yl = random.nextInt(12);
-                g.drawLine(x, y, x + xl, y + yl);
-            }
-            // 生成随机验证码
-            int red, green, blue;
-            for (int i = 0; i < codeCount; i++) {
-                // 获取随机验证码
-                String validateCode = String.valueOf(codeSequence[random.nextInt(randomSeed)]);
-                // 随机构造颜色值
-                red = random.nextInt(255);
-                green = random.nextInt(255);
-                blue = random.nextInt(255);
-                // 将带有颜色的验证码绘制到图像中
-                g.setColor(new Color(red, green, blue));
-                g.drawString(validateCode, (i + 1) * codeX - 6, codeY);
-                // 将产生的随机数拼接起来
-                captcha.append(validateCode);
-            }
-            // 禁止图像缓存
-            response.setHeader("Cache-Control", "no-store");
-            response.setHeader("Pragma", "no-cache");
-            response.setDateHeader("Expires", 0);
-            // 设置响应类型为 JPEG 图片
-            response.setContentType("image/jpeg");
-            // 将缓冲图像写到 Servlet 输出流中
-            ServletOutputStream sos = response.getOutputStream();
-            ImageIO.write(bi, "jpeg", sos);
-            sos.close();
-        } catch (Exception e) {
-            logger.error("创建验证码出错！", e);
-            throw new RuntimeException(e);
-        }
-        return captcha.toString();
     }
 }

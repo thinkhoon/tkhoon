@@ -3,6 +3,7 @@ package com.tkhoon.framework;
 import com.tkhoon.framework.util.ArrayUtil;
 import com.tkhoon.framework.util.CastUtil;
 import com.tkhoon.framework.util.CodecUtil;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ public class DataContext {
     private HttpServletRequest request;
     private HttpServletResponse response;
 
-    //  初始化
+    // 初始化
     public static void init(HttpServletRequest request, HttpServletResponse response) {
         DataContext dataContext = new DataContext();
         dataContext.request = request;
@@ -36,22 +37,22 @@ public class DataContext {
     }
 
     // 获取 Request
-    public static HttpServletRequest getRequest() {
+    private static HttpServletRequest getRequest() {
         return getInstance().request;
     }
 
     // 获取 Response
-    public static HttpServletResponse getResponse() {
+    private static HttpServletResponse getResponse() {
         return getInstance().response;
     }
 
     // 获取 Session
-    public static HttpSession getSession() {
+    private static HttpSession getSession() {
         return getRequest().getSession();
     }
 
     // 获取 Servlet Context
-    public static javax.servlet.ServletContext getServletContext() {
+    private static javax.servlet.ServletContext getServletContext() {
         return getRequest().getServletContext();
     }
 

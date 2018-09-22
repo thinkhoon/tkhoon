@@ -1,9 +1,7 @@
 package com.tkhoon.framework.util;
 
-import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -19,12 +17,50 @@ import org.apache.commons.dbutils.handlers.KeyedHandler;
 import org.apache.commons.dbutils.handlers.MapHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
 import org.apache.commons.dbutils.handlers.ScalarHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 public class DBUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(DBUtil.class);
+    private static final Logger logger = Logger.getLogger(DBUtil.class);
+
+    // 打开数据库连接（type: MySQL，Oracle，SQLServer）
+    public static Connection openConnection(String type, String host, String port, String name, String username, String password) {
+        Connection conn;
+        try {
+            String driver;
+            String url;
+            if (type.equalsIgnoreCase("MySQL")) {
+                driver = "com.mysql.jdbc.Driver";
+                url = "jdbc:mysql://" + host + ":" + port + "/" + name;
+            } else if (type.equalsIgnoreCase("Oracle")) {
+                driver = "oracle.jdbc.driver.OracleDriver";
+                url = "jdbc:oracle:thin:@" + host + ":" + port + ":" + name;
+            } else if (type.equalsIgnoreCase("SQLServer")) {
+                driver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
+                url = "jdbc:sqlserver://" + host + ":" + port + ";databaseName=" + name;
+            } else {
+                throw new RuntimeException();
+            }
+            Class.forName(driver);
+            conn = DriverManager.getConnection(url, username, password);
+        } catch (Exception e) {
+            logger.error("打开数据库连接出错！", e);
+            throw new RuntimeException(e);
+        }
+        return conn;
+    }
+
+    // 关闭数据库连接
+    public static void closeConnection(Connection conn) {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (Exception e) {
+            logger.error("关闭数据库连接出错！", e);
+            throw new RuntimeException(e);
+        }
+    }
 
     // 查询（返回 Array）
     public static Object[] queryArray(QueryRunner runner, String sql, Object... params) {
@@ -87,11 +123,11 @@ public class DBUtil {
             } else {
                 result = runner.query(sql, new BeanHandler<T>(cls), params);
             }
+            printSQL(sql);
         } catch (SQLException e) {
             logger.error("查询出错！", e);
             throw new RuntimeException(e);
         }
-        printSQL(sql);
         return result;
     }
 
@@ -104,19 +140,19 @@ public class DBUtil {
             } else {
                 result = runner.query(sql, new BeanListHandler<T>(cls), params);
             }
+            printSQL(sql);
         } catch (SQLException e) {
             logger.error("查询出错！", e);
             throw new RuntimeException(e);
         }
-        printSQL(sql);
         return result;
     }
 
     // 查询指定列名的值（单条数据）
-    public static <T> T queryColumn(QueryRunner runner, String column, String sql, Object... params) {
-        T result;
+    public static Object queryColumn(QueryRunner runner, String column, String sql, Object... params) {
+        Object result;
         try {
-            result = runner.query(sql, new ScalarHandler<T>(column), params);
+            result = runner.query(sql, new ScalarHandler<Object>(column), params);
         } catch (SQLException e) {
             logger.error("查询出错！", e);
             throw new RuntimeException(e);
@@ -160,42 +196,17 @@ public class DBUtil {
             } else {
                 result = runner.update(sql, params);
             }
+            printSQL(sql);
         } catch (SQLException e) {
             logger.error("更新出错！", e);
             throw new RuntimeException(e);
         }
-        printSQL(sql);
         return result;
-    }
-
-    // 插入（返回自动生成的主键）
-    public static Serializable insertReturnPK(Connection conn, String sql, Object... params) {
-        Serializable key = null;
-        try {
-            PreparedStatement pstmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            if (ArrayUtil.isNotEmpty(params)) {
-                for (int i = 0; i < params.length; i++) {
-                    pstmt.setObject(i + 1, params[i]);
-                }
-            }
-            int rows = pstmt.executeUpdate();
-            if (rows == 1) {
-                ResultSet rs = pstmt.getGeneratedKeys();
-                if (rs.next()) {
-                    key = (Serializable) rs.getObject(1);
-                }
-            }
-        } catch (SQLException e) {
-            logger.error("插入出错！", e);
-            throw new RuntimeException(e);
-        }
-        printSQL(sql);
-        return key;
     }
 
     private static void printSQL(String sql) {
         if (logger.isDebugEnabled()) {
-            logger.debug("[Smart] SQL - {}", sql);
+            logger.debug("SQL - " + sql);
         }
     }
 }
